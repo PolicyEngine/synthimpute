@@ -11,7 +11,7 @@ setup(name='synthimpute',
       install_requires=[
           'numpy',
           'pandas',
-          'scikit-learn'
+          'scikit-learn',
           'statsmodels'
       ],
       zip_safe=False)
