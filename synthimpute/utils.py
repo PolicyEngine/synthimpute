@@ -1,3 +1,5 @@
+import numpy as np
+
 def percentile_qarray_np(dat, q):
     """Get percentiles with a vector of quantiles.
 

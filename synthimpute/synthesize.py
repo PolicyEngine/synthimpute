@@ -1,3 +1,7 @@
+from sklearn import ensemble
+import numpy as np
+import synthimpute as si
+
 def rf_synth(X, seed_cols, n=None, trees=100, random_state=0):
     """Synthesize data via random forests.
 
@@ -25,7 +29,7 @@ def rf_synth(X, seed_cols, n=None, trees=100, random_state=0):
     for i, col in enumerate(rf_vars):
         print('Synthesizing feature ' + str(i + 1) + ' of ' +
               str(len(rf_vars)) + ': ' + col + '...')
-        rf.fit(train[synth.columns], train[col])
-        synth[col] = rf_quantile(rf, synth, np.random.rand(n))
+        rf.fit(X[synth.columns], X[col])
+        synth[col] = si.rf_quantile(rf, synth, np.random.rand(n))
     return synth
         
