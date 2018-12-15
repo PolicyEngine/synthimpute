@@ -2,12 +2,13 @@ from sklearn import ensemble
 import numpy as np
 import synthimpute as si
 
-def rf_synth(X, seed_cols, n=None, trees=100, random_state=0):
+def rf_synth(X, seed_cols, classification_cols, n=None, trees=100, random_state=0):
     """Synthesize data via random forests.
 
     Args:
         X: Data to synthesize, as a pandas DataFrame.
         seed_cols: Columns to seed the synthesis, via sampling with replacement.
+        classification_cols: Numeric columns to synthesize via classification. String columns are classified by default.
         n: Number of records to produce. Defaults to the number of records in X.
         trees: Number of trees in each model (n_estimators).
         random_state: Random state to use for initial sampling with replacement and random forest models.
