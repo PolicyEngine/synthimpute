@@ -67,6 +67,7 @@ def block_cdist(XA, XB, block_vars=None, adjacent_vars=None,
                                     subset_from_row(XB, row), **kwargs))
     return res
 
+
 def nearest_record(XA, XB, block_vars=None, **kwargs):
     """Get the nearest record in XA to each record in XB.
     
@@ -86,3 +87,36 @@ def nearest_record(XA, XB, block_vars=None, **kwargs):
     nearest = dist.groupby('id1').dist.nsmallest(1).reset_index()
     # Join on level_1 = id2.
     return nearest.set_index('level_1').join(dist.id2).reset_index(drop=True)
+
+
+def nearest_synth_train_test(synth, train, test, **kwargs):
+    """Get the nearest record from synth to each of train and test.
+
+    Args:
+        synth: Synthetic DataFrame.
+        train: Training DataFrame.
+        test: Test/holdout DataFrame.
+        **kwargs: Other arguments passed to scipy.cdist, e.g. 
+                  `metric='euclidean'`.
+
+    Returns:
+        DataFrame with these columns:
+        * synth_id: Index in the synthetic file.
+        * train_dist: Shortest distance to a record in the training file.
+        * train_id: Index of record in training file with the shortest distance.
+        * test_dist: Shortest distance to a record in the test file.
+        * test_id: Index of record in test file with the shortest distance.
+        * dist_diff: train_dist - test_diff.
+        * dist_ratio: train_dist / test_diff.
+    """
+    nearest_train = nearest_record(synth, train, **kwargs)
+    nearest_train.columns = ['synth_id', 'train_dist', 'train_id']
+
+    nearest_test = nearest_record(synth, test, **kwargs)
+    nearest_test.columns = ['synth_id', 'test_dist', 'test_id']
+
+    nearest = nearest_train.merge(nearest_test, on='synth_id')
+    nearest['dist_diff'] = nearest.train_dist - nearest.test_dist
+    nearest['dist_ratio'] = nearest.train_dist / nearest.test_dist
+    
+    return nearest
