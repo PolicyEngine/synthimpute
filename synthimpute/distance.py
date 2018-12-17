@@ -1,3 +1,6 @@
+import pandas as pd
+from scipy.spatial.distance import cdist
+
 def cdist_long(XA, XB, **kwargs):
     """Melt the result of scipy.cdist.
     
