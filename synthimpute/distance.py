@@ -56,6 +56,8 @@ def block_cdist(XA, XB, block_vars=None, adjacent_vars=None,
     # TODO: Warn when some blocks are dropped.
     blocks = A_blocks.merge(B_blocks, on=block_vars)
     n_blocks = blocks.shape[0]
+    if block_vars is None:
+        return cdist_long(XA, XB, **kwargs)
     res = pd.DataFrame()
     for index, row in blocks.iterrows():
         if verbose:
@@ -64,3 +66,23 @@ def block_cdist(XA, XB, block_vars=None, adjacent_vars=None,
         res = res.append(cdist_long(subset_from_row(XA, row),
                                     subset_from_row(XB, row), **kwargs))
     return res
+
+def nearest_record(XA, XB, block_vars=None, **kwargs):
+    """Get the nearest record in XA to each record in XB.
+    
+    Args:
+        df1: DataFrame.
+        df2: DataFrame.
+        block_vars: List of variables to block on, i.e. only compare
+                    records where they match. Passed to block_cdist.
+        **kwargs: Other arguments passed to scipy.cdist, e.g. 
+                  `metric='euclidean'`.
+    
+    Returns:
+        A float numpy array of the quantiles, with one row per row of X.
+    """
+    dist = block_cdist(XA, XB, block_vars)
+    # Use nsmallest over min to capture the index of the nearest match.
+    nearest = dist.groupby('id1').dist.nsmallest(1).reset_index()
+    # Join on level_1 = id2.
+    return nearest.set_index('level_1').join(dist.id2).reset_index(drop=True)
