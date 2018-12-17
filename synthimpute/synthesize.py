@@ -28,6 +28,7 @@ def rf_synth(X, seed_cols, classification_cols=None, n=None, trees=100, random_s
                                         n_jobs=-1)  # Use maximum number of cores.
     # Loop through each variable.
     rf_vars = list(set(X.columns) - set(seed_cols))
+    np.random.seed(random_state)
     for i, col in enumerate(rf_vars):
         print('Synthesizing feature ' + str(i + 1) + ' of ' +
               str(len(rf_vars)) + ': ' + col + '...')
