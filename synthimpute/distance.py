@@ -50,14 +50,14 @@ def block_cdist(XA, XB, block_vars=None, adjacent_vars=None,
     Returns:
         DataFrame with id1, id2, distance, for all compared pairs.
     """
+    if block_vars is None:
+        return cdist_long(XA, XB, **kwargs)
     # TODO: Use adjacent_vars.
     A_blocks = XA[block_vars].drop_duplicates()
     B_blocks = XB[block_vars].drop_duplicates()
     # TODO: Warn when some blocks are dropped.
     blocks = A_blocks.merge(B_blocks, on=block_vars)
     n_blocks = blocks.shape[0]
-    if block_vars is None:
-        return cdist_long(XA, XB, **kwargs)
     res = pd.DataFrame()
     for index, row in blocks.iterrows():
         if verbose:
