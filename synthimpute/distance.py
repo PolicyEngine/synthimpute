@@ -120,3 +120,28 @@ def nearest_synth_train_test(synth, train, test, **kwargs):
     nearest['dist_ratio'] = nearest.train_dist / nearest.test_dist
     
     return nearest
+
+
+def nearest_synth_train_test_record(dist, synth, train, test):
+    """Produce DataFrame with a synthetic record and nearest records in the
+       train and test sets.
+
+    Args:
+        dist: Record from a distance DataFrame, i.e. produced from 
+              nearest_synth_train_test().
+        synth: Synthetic DataFrame.
+        train: Training DataFrame.
+        test: Test/holdout DataFrame.
+
+    Returns:
+        DataFrame with three columns--synth, train, test--and rows for
+        each column.
+    """
+    if isinstance(dist, pd.DataFrame):
+        dist = dist.iloc[0]
+    synth_record = synth.iloc[dist.synth_id]
+    train_record = train.iloc[dist.train_id]
+    test_record = test.iloc[dist.test_id]
+    res = pd.concat([synth_record, train_record, test_record], axis=1)
+    res.columns = ['synth', 'train', 'test']
+    return res
