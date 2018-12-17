@@ -71,8 +71,8 @@ def nearest_record(XA, XB, block_vars=None, **kwargs):
     """Get the nearest record in XA to each record in XB.
     
     Args:
-        df1: DataFrame.
-        df2: DataFrame.
+        XA: DataFrame.
+        XB: DataFrame.
         block_vars: List of variables to block on, i.e. only compare
                     records where they match. Passed to block_cdist.
         **kwargs: Other arguments passed to scipy.cdist, e.g. 
