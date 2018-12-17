@@ -122,7 +122,22 @@ def nearest_synth_train_test(synth, train, test, **kwargs):
     return nearest
 
 
-def nearest_synth_train_test_record(dist, synth, train, test):
+def print_dist(r):
+    """Print a record from a dist DataFrame as a sentence.
+
+    Args:
+        r: Record from a dist DataFrame, i.e. from nearest_synth_train_test().
+
+    Returns:
+        Nothing. Prints the record as a sentence.
+    """
+    print("Synthetic record " + str(r.synth_id) + " is closest to training record " +
+          str(r.train_id) + " (distance=" + str(r.train_dist.round(2)) +
+          ") and closest to test record " +
+          str(r.test_id) + " (distance=" + str(r.test_dist.round(2)) + ").")
+
+
+def nearest_synth_train_test_record(dist, synth, train, test, verbose=True):
     """Produce DataFrame with a synthetic record and nearest records in the
        train and test sets.
 
@@ -132,6 +147,7 @@ def nearest_synth_train_test_record(dist, synth, train, test):
         synth: Synthetic DataFrame.
         train: Training DataFrame.
         test: Test/holdout DataFrame.
+        verbose: Whether to print the dist record as a sentence. Defaults to True.
 
     Returns:
         DataFrame with three columns--synth, train, test--and rows for
@@ -139,9 +155,13 @@ def nearest_synth_train_test_record(dist, synth, train, test):
     """
     if isinstance(dist, pd.DataFrame):
         dist = dist.iloc[0]
+    if verbose:
+        print_dist(dist)
     synth_record = synth.iloc[dist.synth_id]
     train_record = train.iloc[dist.train_id]
     test_record = test.iloc[dist.test_id]
     res = pd.concat([synth_record, train_record, test_record], axis=1)
     res.columns = ['synth', 'train', 'test']
     return res
+
+
