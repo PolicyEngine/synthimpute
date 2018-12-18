@@ -112,22 +112,23 @@ def nearest_synth_train_test(synth, train, test, scale=True, **kwargs):
         * dist_diff: train_dist - test_diff.
         * dist_ratio: train_dist / test_diff.
     """
+    # Scale all features according to training distribution.
     if scale:
         means = train.mean()
         stds = train.std()
         train = (train - means) / stds
         test = (test - means) / stds
         synth = (synth - means) / stds
+    # Calculate the nearest record from each synthetic record in both
+    # training and testing sets.
     nearest_train = nearest_record(synth, train, **kwargs)
     nearest_train.columns = ['synth_id', 'train_dist', 'train_id']
-
     nearest_test = nearest_record(synth, test, **kwargs)
     nearest_test.columns = ['synth_id', 'test_dist', 'test_id']
-
+    # Merge on synth_id, calculate difference in distances, and return.
     nearest = nearest_train.merge(nearest_test, on='synth_id')
     nearest['dist_diff'] = nearest.train_dist - nearest.test_dist
     nearest['dist_ratio'] = nearest.train_dist / nearest.test_dist
-    
     return nearest
 
 
