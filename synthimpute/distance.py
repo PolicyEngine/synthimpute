@@ -89,13 +89,16 @@ def nearest_record(XA, XB, block_vars=None, **kwargs):
     return nearest.set_index('level_1').join(dist.id2).reset_index(drop=True)
 
 
-def nearest_synth_train_test(synth, train, test, **kwargs):
+def nearest_synth_train_test(synth, train, test, scale=True, **kwargs):
     """Get the nearest record from synth to each of train and test.
 
     Args:
         synth: Synthetic DataFrame.
         train: Training DataFrame.
         test: Test/holdout DataFrame.
+        scale: Whether to scale the datasets by means and standard deviations
+               in `train`. This avoids using standardized distance metrics
+               which will scale datasets differently. Defaults to True.
         **kwargs: Other arguments passed to scipy.cdist, e.g. 
                   `metric='euclidean'`.
 
@@ -109,6 +112,12 @@ def nearest_synth_train_test(synth, train, test, **kwargs):
         * dist_diff: train_dist - test_diff.
         * dist_ratio: train_dist / test_diff.
     """
+    if scale:
+        means = train.mean()
+        stds = train.std()
+        train = (train - means) / stds
+        test = (test - means) / stds
+        synth = (synth - means) / stds
     nearest_train = nearest_record(synth, train, **kwargs)
     nearest_train.columns = ['synth_id', 'train_dist', 'train_id']
 
