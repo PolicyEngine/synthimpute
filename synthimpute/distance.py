@@ -27,7 +27,9 @@ def subset_from_row(df, row):
     Returns:
         DataFrame subsetting df based on values in row.
     """
-    return pd.DataFrame(row).transpose().merge(df, on=row.index.values.tolist())
+    row_df = pd.DataFrame(row).transpose()
+    # Nonstandard merge to retain the index in df.
+    return df.reset_index().merge(row_df).set_index('index')
 
 
 def block_cdist(XA, XB, block_vars=None, adjacent_vars=None,
@@ -80,7 +82,8 @@ def nearest_record(XA, XB, block_vars=None, **kwargs):
                   `metric='euclidean'`.
     
     Returns:
-        A float numpy array of the quantiles, with one row per row of X.
+        DataFrame with columns for id1 (from XA), id2 (from XB), and dist.
+        Each id1 maps to a single id2, which is the nearest record from XB.
     """
     dist = block_cdist(XA, XB, block_vars)
     # Use nsmallest over min to capture the index of the nearest match.
