@@ -89,13 +89,15 @@ def nearest_record(XA, XB, block_vars=None, **kwargs):
     return nearest.set_index('level_1').join(dist.id2).reset_index(drop=True)
 
 
-def nearest_synth_train_test(synth, train, test, scale=True, **kwargs):
+def nearest_synth_train_test(synth, train, test, block_vars=None, scale=True,
+                             **kwargs):
     """Get the nearest record from synth to each of train and test.
 
     Args:
         synth: Synthetic DataFrame.
         train: Training DataFrame.
         test: Test/holdout DataFrame.
+        block_vars: List of variables to block on.
         scale: Whether to scale the datasets by means and standard deviations
                in `train`. This avoids using standardized distance metrics
                which will scale datasets differently. Defaults to True.
@@ -121,9 +123,9 @@ def nearest_synth_train_test(synth, train, test, scale=True, **kwargs):
         synth = (synth - means) / stds
     # Calculate the nearest record from each synthetic record in both
     # training and testing sets.
-    nearest_train = nearest_record(synth, train, **kwargs)
+    nearest_train = nearest_record(synth, train, block_vars, **kwargs)
     nearest_train.columns = ['synth_id', 'train_dist', 'train_id']
-    nearest_test = nearest_record(synth, test, **kwargs)
+    nearest_test = nearest_record(synth, test, block_vars, **kwargs)
     nearest_test.columns = ['synth_id', 'test_dist', 'test_id']
     # Merge on synth_id, calculate difference in distances, and return.
     nearest = nearest_train.merge(nearest_test, on='synth_id')
