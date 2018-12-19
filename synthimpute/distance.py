@@ -73,14 +73,14 @@ def block_cdist(XA, XB, block_vars=None, adjacent_vars=None,
     # TODO: Warn when some blocks are dropped.
     blocks = A_blocks.merge(B_blocks, on=block_vars)
     n_blocks = blocks.shape[0]
-    res = pd.DataFrame()
+    res = []
     for index, row in blocks.iterrows():
         if verbose:
             print('Running block ' + str(index + 1) + ' of ' + str(n_blocks) +
                   '...')
-        res = res.append(cdist_long(subset_from_row(XA, row),
-                                    subset_from_row(XB, row), **kwargs))
-    return res
+        res.append(cdist_long(subset_from_row(XA, row),
+                              subset_from_row(XB, row), **kwargs))
+    return pd.concat(res, axis=1)
 
 
 def nearest_record(XA, XB, block_vars=None, **kwargs):
