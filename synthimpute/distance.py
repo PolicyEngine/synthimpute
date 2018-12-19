@@ -80,7 +80,7 @@ def block_cdist(XA, XB, block_vars=None, adjacent_vars=None,
                   '...')
         res.append(cdist_long(subset_from_row(XA, row),
                               subset_from_row(XB, row), **kwargs))
-    return pd.concat(res, axis=1)
+    return pd.concat(res)
 
 
 def nearest_record(XA, XB, block_vars=None, **kwargs):
