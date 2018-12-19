@@ -19,9 +19,9 @@ def cdist_long(XA, XB, preserve_index=True, **kwargs):
     res.columns = ['id1', 'id2', 'dist']
     if preserve_index:
         Amap = pd.DataFrame({'id1': np.arange(XA.shape[0]),
-                             'index1': XA.index})
+                             'index1': XA.index.values})
         Bmap = pd.DataFrame({'id2': np.arange(XB.shape[0]),
-                             'index2': XB.index})
+                             'index2': XB.index.values})
         res = res.merge(Amap, on='id1').merge(Bmap, on='id2').drop(
             ['id1', 'id2'], axis=1)
         res.columns = ['dist', 'id1', 'id2']
