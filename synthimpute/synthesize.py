@@ -34,5 +34,5 @@ def rf_synth(X, seed_cols, classification_cols=None, n=None, trees=100, random_s
               str(len(rf_vars)) + ': ' + col + '...')
         rf.fit(X[synth.columns], X[col])
         synth[col] = si.rf_quantile(rf, synth, np.random.rand(n))
-    return synth
+    return synth.reset_index(drop=True)
         
