@@ -1,12 +1,14 @@
 import pandas as pd
 from scipy.spatial.distance import cdist
 
-def cdist_long(XA, XB, **kwargs):
+def cdist_long(XA, XB, preserve_index=True, **kwargs):
     """Melt the result of scipy.cdist.
     
     Args:
         XA: DataFrame 1.
         XB: DataFrame 2.
+        preserve_index: Preserve index values from XA and XB. If False, row
+                        numbers are returned instead. Defaults to True.
         **kwargs: Other arguments passed to scipy.cdist.
         
     Returns:
@@ -14,6 +16,14 @@ def cdist_long(XA, XB, **kwargs):
     """
     res = pd.DataFrame(cdist(XA, XB, **kwargs)).reset_index().melt('index')
     res.columns = ['id1', 'id2', 'dist']
+    if preserve_index:
+        Amap = pd.DataFrame({'id1': np.arange(XA.shape[0]),
+                             'index1': XA.index})
+        Bmap = pd.DataFrame({'id2': np.arange(XB.shape[0]),
+                             'index2': XB.index})
+        res = res.merge(Amap, on='id1').merge(Bmap, on='id2').drop(
+            ['id1', 'id2'], axis=1)
+        res.columns = ['dist', 'id1', 'id2']
     return res
 
 
