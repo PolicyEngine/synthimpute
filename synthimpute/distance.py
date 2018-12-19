@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from scipy.spatial.distance import cdist
 
 def cdist_long(XA, XB, preserve_index=True, **kwargs):
