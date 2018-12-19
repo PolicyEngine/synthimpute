@@ -17,6 +17,8 @@ def cdist_long(XA, XB, preserve_index=True, **kwargs):
     """
     res = pd.DataFrame(cdist(XA, XB, **kwargs)).reset_index().melt('index')
     res.columns = ['id1', 'id2', 'dist']
+    # id2 is sometimes returned as an object.
+    res['id2'] = res.id2.astype(int)
     if preserve_index:
         Amap = pd.DataFrame({'id1': np.arange(XA.shape[0]),
                              'index1': XA.index.values})
