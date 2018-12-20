@@ -159,10 +159,11 @@ def print_dist(r):
     Returns:
         Nothing. Prints the record as a sentence.
     """
-    print("Synthetic record " + str(r.synth_id) + " is closest to training record " +
-          str(r.train_id) + " (distance=" + str(r.train_dist.round(2)) +
+    print("Synthetic record " + str(int(r.synth_id)) +
+          " is closest to training record " +
+          str(int(r.train_id)) + " (distance=" + str(r.train_dist.round(2)) +
           ") and closest to test record " +
-          str(r.test_id) + " (distance=" + str(r.test_dist.round(2)) + ").")
+          str(int(r.test_id)) + " (distance=" + str(r.test_dist.round(2)) + ").")
 
 
 def nearest_synth_train_test_record(dist, synth, train, test, verbose=True):
