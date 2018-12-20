@@ -15,6 +15,8 @@ def cdist_long(XA, XB, preserve_index=True, **kwargs):
     Returns:
         DataFrame with id1, id2, and dist.
     """
+    # Ensure the same column order, pending scipy/scipy#9616.
+    XB = XB[XA.columns]
     res = pd.DataFrame(cdist(XA, XB, **kwargs)).reset_index().melt('index')
     res.columns = ['id1', 'id2', 'dist']
     # id2 is sometimes returned as an object.
