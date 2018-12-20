@@ -27,7 +27,7 @@ def cdist_long(XA, XB, preserve_index=True, **kwargs):
         res = res.merge(Amap, on='id1').merge(Bmap, on='id2').drop(
             ['id1', 'id2'], axis=1)
         res.columns = ['dist', 'id1', 'id2']
-    return res
+    return res.reset_index(drop=True)
 
 
 def subset_from_row(df, row):
