@@ -27,7 +27,7 @@ def cdist_long(XA, XB, preserve_index=True, **kwargs):
         res = res.merge(Amap, on='id1').merge(Bmap, on='id2').drop(
             ['id1', 'id2'], axis=1)
         res.columns = ['dist', 'id1', 'id2']
-    return res.reset_index(drop=True)
+    return res
 
 
 def subset_from_row(df, row):
@@ -80,7 +80,7 @@ def block_cdist(XA, XB, block_vars=None, adjacent_vars=None,
                   '...')
         res.append(cdist_long(subset_from_row(XA, row),
                               subset_from_row(XB, row), **kwargs))
-    return pd.concat(res)
+    return pd.concat(res).reset_index(drop=True)
 
 
 def nearest_record(XA, XB, block_vars=None, **kwargs):
