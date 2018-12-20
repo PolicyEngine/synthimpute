@@ -192,7 +192,7 @@ def nearest_synth_train_test_record(dist, synth, train, test, verbose=True):
     train_record = train.iloc[int(dist.train_id)]
     test_record = test.iloc[int(dist.test_id)]
     res = pd.concat([train_record, synth_record, test_record], axis=1, sort=True)
-    res.columns = ['synth', 'train', 'test']
+    res.columns = ['train', 'synth', 'test']
     return res
 
 
