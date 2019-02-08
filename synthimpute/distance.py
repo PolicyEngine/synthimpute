@@ -102,12 +102,13 @@ def nearest_record_single(XA, XB, **kwargs):
     nearest = dist.groupby('id1').dist.nsmallest(1).reset_index()
     return nearest.set_index('level_1').join(dist.id2).reset_index(drop=True)
 
-def nearest_record(XA, XB, block_vars=None, **kwargs):
+def nearest_record(XA, XB, verbose=True, block_vars=None, **kwargs):
     """Get the nearest record in XA to each record in XB.
     
     Args:
         XA: DataFrame.
         XB: DataFrame.
+        verbose: Print status along blocks. Defaults to True.
         block_vars: List of variables to block on, i.e. only compare
                     records where they match. Passed to block_cdist.
         **kwargs: Other arguments passed to scipy.cdist, e.g. 
