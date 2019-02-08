@@ -85,6 +85,23 @@ def block_cdist(XA, XB, block_vars=None, adjacent_vars=None,
     return pd.concat(res).reset_index(drop=True)
 
 
+def nearest_record_single(XA, XB, **kwargs):
+    """Get the nearest record in XA for each record in XB, without blocking.
+
+    Args:
+        XA: DataFrame.
+        XB: DataFrame.
+        **kwargs: Other arguments passed to scipy.cdist, e.g. 
+                  `metric='euclidean'`.
+    
+    Returns:
+        DataFrame with columns for id1 (from XA), id2 (from XB), and dist.
+        Each id1 maps to a single id2, which is the nearest record from XB.
+    """
+    dist = cdist_long(XA, XB, **kwargs).reset_index(drop=True)
+    nearest = dist.groupby('id1').dist.nsmallest(1).reset_index()
+    return nearest.set_index('level_1').join(dist.id2).reset_index(drop=True)
+
 def nearest_record(XA, XB, block_vars=None, **kwargs):
     """Get the nearest record in XA to each record in XB.
     
@@ -100,11 +117,22 @@ def nearest_record(XA, XB, block_vars=None, **kwargs):
         DataFrame with columns for id1 (from XA), id2 (from XB), and dist.
         Each id1 maps to a single id2, which is the nearest record from XB.
     """
-    dist = block_cdist(XA, XB, block_vars)
-    # Use nsmallest over min to capture the index of the nearest match.
-    nearest = dist.groupby('id1').dist.nsmallest(1).reset_index()
-    # Join on level_1 = id2.
-    return nearest.set_index('level_1').join(dist.id2).reset_index(drop=True)
+    if block_vars is None:
+        return nearest_record_single(XA, XB, **kwargs)
+    # TODO: Use adjacent_vars.
+    A_blocks = XA[block_vars].drop_duplicates()
+    B_blocks = XB[block_vars].drop_duplicates()
+    # TODO: Warn when some blocks are dropped.
+    blocks = A_blocks.merge(B_blocks, on=block_vars)
+    n_blocks = blocks.shape[0]
+    res = []
+    for index, row in blocks.iterrows():
+        if verbose:
+            print('Running block ' + str(index + 1) + ' of ' + str(n_blocks) +
+                  '...')
+        res.append(nearest_record_single(subset_from_row(XA, row),
+                                         subset_from_row(XB, row), **kwargs))
+    return pd.concat(res).reset_index(drop=True)
 
 
 def nearest_synth_train_test(synth, train, test, block_vars=None, scale=True,
