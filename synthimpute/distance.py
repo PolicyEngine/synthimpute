@@ -47,11 +47,11 @@ def subset_from_row(df, row):
     return df.reset_index().merge(row_df).set_index('index')
 
 
-def nearest_record_single(XA, XB, **kwargs):
+def nearest_record_single(XA1, XB, **kwargs):
     """Get the nearest record in XA for each record in XB.
 
     Args:
-        XA: Series.
+        XA1: Series.
         XB: DataFrame.
         **kwargs: Other arguments passed to scipy.cdist, e.g. 
                   `metric='euclidean'`.
