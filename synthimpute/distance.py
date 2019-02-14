@@ -47,104 +47,48 @@ def subset_from_row(df, row):
     return df.reset_index().merge(row_df).set_index('index')
 
 
-def block_cdist(XA, XB, block_vars=None, adjacent_vars=None,
-                verbose=True, **kwargs):
-    """Calculate distance between each record in df1 and df2, blocked on
-       certain variables for efficiency.
-    
-    Args:
-        XA: DataFrame.
-        XB: DataFrame.
-        block_vars: List of variables to block on, i.e. only compare records
-                    where they match.
-        adjacent_vars: List of integer variables to block on, including adjacent
-                       values. For example, records with a value of 2 will be
-                       compared against other records with values of 1, 2, and 3.
-        verbose: Print status along blocks. Defaults to True.
-        **kwargs: Other arguments passed to scipy.cdist, e.g. 
-                  `metric='euclidean'`.
-    
-    Returns:
-        DataFrame with id1, id2, distance, for all compared pairs.
-    """
-    if block_vars is None:
-        return cdist_long(XA, XB, **kwargs)
-    # TODO: Use adjacent_vars.
-    A_blocks = XA[block_vars].drop_duplicates()
-    B_blocks = XB[block_vars].drop_duplicates()
-    # TODO: Warn when some blocks are dropped.
-    blocks = A_blocks.merge(B_blocks, on=block_vars)
-    n_blocks = blocks.shape[0]
-    res = []
-    for index, row in blocks.iterrows():
-        if verbose:
-            print('Running block ' + str(index + 1) + ' of ' + str(n_blocks) +
-                  '...')
-        res.append(cdist_long(subset_from_row(XA, row),
-                              subset_from_row(XB, row), **kwargs))
-    return pd.concat(res).reset_index(drop=True)
-
-
 def nearest_record_single(XA, XB, **kwargs):
-    """Get the nearest record in XA for each record in XB, without blocking.
+    """Get the nearest record in XA for each record in XB.
 
     Args:
-        XA: DataFrame.
+        XA: Series.
         XB: DataFrame.
         **kwargs: Other arguments passed to scipy.cdist, e.g. 
                   `metric='euclidean'`.
     
     Returns:
-        DataFrame with columns for id1 (from XA), id2 (from XB), and dist.
-        Each id1 maps to a single id2, which is the nearest record from XB.
+        DataFrame with columns for id_B (from XB) and dist.
     """
-    dist = cdist_long(XA, XB, **kwargs).reset_index(drop=True)
-    nearest = dist.groupby('id1').dist.nsmallest(1).reset_index()
-    return nearest.set_index('level_1').join(dist.id2).reset_index(drop=True)
+    dist = cdist(XA1.values.reshape(1, -1), XB, **kwargs)[0]
+    return pd.Series({'dist': np.amin(dist), 'id_B': np.argmin(dist)})
 
-def nearest_record(XA, XB, verbose=True, block_vars=None, **kwargs):
-    """Get the nearest record in XA to each record in XB.
-    
+
+def nearest_record(XA, XB, **kwargs):
+    """Get the nearest record in XA for each record in XB.
+
     Args:
-        XA: DataFrame.
+        XA: DataFrame. Each record is matched against the nearest in XB.
         XB: DataFrame.
-        verbose: Print status along blocks. Defaults to True.
-        block_vars: List of variables to block on, i.e. only compare
-                    records where they match. Passed to block_cdist.
-        **kwargs: Other arguments passed to scipy.cdist, e.g. 
-                  `metric='euclidean'`.
-    
+
     Returns:
-        DataFrame with columns for id1 (from XA), id2 (from XB), and dist.
-        Each id1 maps to a single id2, which is the nearest record from XB.
+        DataFrame with columns for id_A (from XA), id_B (from XB), and dist.
+        Each id_A maps to a single id_B, which is the nearest record from XB.
     """
-    if block_vars is None:
-        return nearest_record_single(XA, XB, **kwargs)
-    # TODO: Use adjacent_vars.
-    A_blocks = XA[block_vars].drop_duplicates()
-    B_blocks = XB[block_vars].drop_duplicates()
-    # TODO: Warn when some blocks are dropped.
-    blocks = A_blocks.merge(B_blocks, on=block_vars)
-    n_blocks = blocks.shape[0]
-    res = []
-    for index, row in blocks.iterrows():
-        if verbose:
-            print('Running block ' + str(index + 1) + ' of ' + str(n_blocks) +
-                  '...')
-        res.append(nearest_record_single(subset_from_row(XA, row),
-                                         subset_from_row(XB, row), **kwargs))
-    return pd.concat(res).reset_index(drop=True)
+    res = XA.apply(lambda x: nearest_record_single(x, XB, **kwargs), axis=1)
+    res['id_A'] = XA.index
+    # id_B is sometimes returned as an object.
+    res['id_B'] = res.id_B.astype(int)
+    # Reorder columns.
+    return res[['id_A', 'id_B', 'dist']]
 
 
-def nearest_synth_train_test(synth, train, test, block_vars=None, scale=True,
-                             **kwargs):
+def nearest_synth_train_test(synth, train, test, scale=True, **kwargs):
     """Get the nearest record from synth to each of train and test.
 
     Args:
         synth: Synthetic DataFrame.
         train: Training DataFrame.
         test: Test/holdout DataFrame.
-        block_vars: List of variables to block on.
         scale: Whether to scale the datasets by means and standard deviations
                in `train`. This avoids using standardized distance metrics
                which will scale datasets differently. Defaults to True.
@@ -170,9 +114,9 @@ def nearest_synth_train_test(synth, train, test, block_vars=None, scale=True,
         synth = (synth - means) / stds
     # Calculate the nearest record from each synthetic record in both
     # training and testing sets.
-    nearest_train = nearest_record(synth, train, block_vars, **kwargs)
+    nearest_train = nearest_record(synth, train, **kwargs)
     nearest_train.columns = ['synth_id', 'train_dist', 'train_id']
-    nearest_test = nearest_record(synth, test, block_vars, **kwargs)
+    nearest_test = nearest_record(synth, test, **kwargs)
     nearest_test.columns = ['synth_id', 'test_dist', 'test_id']
     # Merge on synth_id, calculate difference in distances, and return.
     nearest = nearest_train.merge(nearest_test, on='synth_id')
@@ -183,7 +127,6 @@ def nearest_synth_train_test(synth, train, test, block_vars=None, scale=True,
 
 def print_dist(r):
     """Print a record from a dist DataFrame as a sentence.
-
     Args:
         r: Record from a dist DataFrame, i.e. from nearest_synth_train_test().
 
