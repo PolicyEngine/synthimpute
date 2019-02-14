@@ -118,10 +118,10 @@ def nearest_synth_train_test(synth, train, test, scale=True, **kwargs):
     # training and testing sets.
     print("Calculating nearest records to training set...")
     nearest_train = nearest_record(synth, train, **kwargs)
-    nearest_train.columns = ['synth_id', 'train_dist', 'train_id']
+    nearest_train.columns = ['synth_id', 'train_id', 'train_dist']
     print("Calculating nearest records to test set...")
     nearest_test = nearest_record(synth, test, **kwargs)
-    nearest_test.columns = ['synth_id', 'test_dist', 'test_id']
+    nearest_test.columns = ['synth_id', 'test_id', 'test_dist']
     # Merge on synth_id, calculate difference in distances, and return.
     nearest = nearest_train.merge(nearest_test, on='synth_id')
     nearest['dist_diff'] = nearest.train_dist - nearest.test_dist
