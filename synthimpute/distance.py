@@ -74,6 +74,8 @@ def nearest_record(XA, XB, **kwargs):
         DataFrame with columns for id_A (from XA), id_B (from XB), and dist.
         Each id_A maps to a single id_B, which is the nearest record from XB.
     """
+    # Reorder XB columns to match XA (scipy treats it as a matrix).
+    XB = XB[XA.columns]
     res = XA.apply(lambda x: nearest_record_single(x, XB, **kwargs), axis=1)
     res['id_A'] = XA.index
     # id_B is sometimes returned as an object.
