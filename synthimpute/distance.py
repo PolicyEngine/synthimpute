@@ -131,6 +131,7 @@ def nearest_synth_train_test(synth, train, test, scale=True, **kwargs):
 
 def print_dist(r):
     """Print a record from a dist DataFrame as a sentence.
+
     Args:
         r: Record from a dist DataFrame, i.e. from nearest_synth_train_test().
 
