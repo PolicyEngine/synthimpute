@@ -170,5 +170,3 @@ def nearest_synth_train_test_record(dist, synth, train, test, verbose=True):
     res = pd.concat([train_record, synth_record, test_record], axis=1, sort=True)
     res.columns = ['train', 'synth', 'test']
     return res
-
-
