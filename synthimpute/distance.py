@@ -136,9 +136,10 @@ def nearest_synth_train_test(synth, train, test=None, k=None, scale=True,
     # training and testing sets.
     print("Calculating nearest records to training set...")
     nearest_train = nearest_record(synth, train, k, **kwargs)
-    nearest_train.columns = ['synth_id', 'train_id', 'train_dist']
     if test is None:  # We're done.
         return nearest_train
+    # This will break if k is not None.
+    nearest_train.columns = ['synth_id', 'train_id', 'train_dist']
     print("Calculating nearest records to test set...")
     nearest_test = nearest_record(synth, test, k, **kwargs)
     nearest_test.columns = ['synth_id', 'test_id', 'test_dist']
