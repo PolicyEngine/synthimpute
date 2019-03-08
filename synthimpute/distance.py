@@ -99,13 +99,15 @@ def nearest_record(XA, XB, k=None, **kwargs):
                [val for pair in zip(id_B_cols, dist_cols) for val in pair]]
 
 
-def nearest_synth_train_test(synth, train, test, scale=True, **kwargs):
+def nearest_synth_train_test(synth, train, test=None, k=None, scale=True,
+                             **kwargs):
     """Get the nearest record from synth to each of train and test.
 
     Args:
         synth: Synthetic DataFrame.
         train: Training DataFrame.
-        test: Test/holdout DataFrame.
+        test: Test/holdout DataFrame. Defaults to None.
+        k: Number of nearest elements to return. Defaults to None (single nearest).
         scale: Whether to scale the datasets by means and standard deviations
                in `train`. This avoids using standardized distance metrics
                which will scale datasets differently. Defaults to True.
@@ -113,7 +115,7 @@ def nearest_synth_train_test(synth, train, test, scale=True, **kwargs):
                   `metric='euclidean'`.
 
     Returns:
-        DataFrame with these columns:
+        DataFrame with these columns (will vary if k is not None or test is None):
         * synth_id: Index in the synthetic file.
         * train_dist: Shortest distance to a record in the training file.
         * train_id: Index of record in training file with the shortest distance.
@@ -127,20 +129,24 @@ def nearest_synth_train_test(synth, train, test, scale=True, **kwargs):
         means = train.mean()
         stds = train.std()
         train = (train - means) / stds
-        test = (test - means) / stds
         synth = (synth - means) / stds
+        if test is not None:
+            test = (test - means) / stds
     # Calculate the nearest record from each synthetic record in both
     # training and testing sets.
     print("Calculating nearest records to training set...")
-    nearest_train = nearest_record(synth, train, **kwargs)
+    nearest_train = nearest_record(synth, train, k, **kwargs)
     nearest_train.columns = ['synth_id', 'train_id', 'train_dist']
+    if test is None:  # We're done.
+        return nearest_train
     print("Calculating nearest records to test set...")
-    nearest_test = nearest_record(synth, test, **kwargs)
+    nearest_test = nearest_record(synth, test, k, **kwargs)
     nearest_test.columns = ['synth_id', 'test_id', 'test_dist']
     # Merge on synth_id, calculate difference in distances, and return.
     nearest = nearest_train.merge(nearest_test, on='synth_id')
-    nearest['dist_diff'] = nearest.train_dist - nearest.test_dist
-    nearest['dist_ratio'] = nearest.train_dist / nearest.test_dist
+    if k is not None:  # Columns won't align.
+        nearest['dist_diff'] = nearest.train_dist - nearest.test_dist
+        nearest['dist_ratio'] = nearest.train_dist / nearest.test_dist
     return nearest
 
 
