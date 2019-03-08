@@ -73,19 +73,27 @@ def nearest_record_single(XA1, XB, k=None, **kwargs):
                          index = idx_ind + dist_ind)
 
 
-def nearest_record(XA, XB, k=None, **kwargs):
+def nearest_record(XA, XB, k=None, scale=False, **kwargs):
     """Get the nearest record in XA for each record in XB.
 
     Args:
         XA: DataFrame. Each record is matched against the nearest in XB.
         XB: DataFrame.
         k: Number of nearest items to return. Defaults to None (single nearest).
+        scale: Whether to scale the data by XA's mean and standard deviation.
+               Defaults to False.
         **kwargs: Other arguments passed to scipy.distance.cdist.
 
     Returns:
         DataFrame with columns for id_A (from XA), id_B (from XB), and dist.
         Each id_A maps to a single id_B, which is the nearest record from XB.
     """
+    # Scale all features according to the XA distribution.
+    if scale:
+        means = XA.mean()
+        stds = XA.std()
+        XA = (XA - means) / stds
+        XB = (XB - means) / stds
     assert XA.columns.equals(XB.columns), \
         'XA and XB must have the same columns (in the same order).'
     res = XA.apply(lambda x: nearest_record_single(x, XB, k, **kwargs), axis=1)
