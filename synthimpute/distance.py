@@ -73,12 +73,14 @@ def nearest_record_single(XA1, XB, k=None, **kwargs):
                          index = idx_ind + dist_ind)
 
 
-def nearest_record(XA, XB, **kwargs):
+def nearest_record(XA, XB, k=None, **kwargs):
     """Get the nearest record in XA for each record in XB.
 
     Args:
         XA: DataFrame. Each record is matched against the nearest in XB.
         XB: DataFrame.
+        k: Number of nearest items to return. Defaults to None (single nearest).
+        **kwargs: Other arguments passed to scipy.distance.cdist.
 
     Returns:
         DataFrame with columns for id_A (from XA), id_B (from XB), and dist.
@@ -86,12 +88,15 @@ def nearest_record(XA, XB, **kwargs):
     """
     assert XA.columns.equals(XB.columns), \
         'XA and XB must have the same columns (in the same order).'
-    res = XA.apply(lambda x: nearest_record_single(x, XB, **kwargs), axis=1)
+    res = XA.apply(lambda x: nearest_record_single(x, XB, k, **kwargs), axis=1)
     res['id_A'] = XA.index
     # id_B is sometimes returned as an object.
-    res['id_B'] = res.id_B.astype(int)
-    # Reorder columns.
-    return res[['id_A', 'id_B', 'dist']]
+    id_B_cols = [col for col in res if col.startswith('id_B')]
+    dist_cols = [col for col in res if col.startswith('dist')]
+    res[id_B_cols] = res[id_B_cols].astype(int)
+    # Reorder columns, interleaving IDs and distance.
+    return res[['id_A'] +
+               [val for pair in zip(id_B_cols, dist_cols) for val in pair]]
 
 
 def nearest_synth_train_test(synth, train, test, scale=True, **kwargs):
