@@ -47,20 +47,30 @@ def subset_from_row(df, row):
     return df.reset_index().merge(row_df).set_index('index')
 
 
-def nearest_record_single(XA1, XB, **kwargs):
-    """Get the nearest record in XA for each record in XB.
-
+def nearest_record_single(XA1, XB, k=None, **kwargs):
+        """Get the nearest record in XA for each record in XB.
     Args:
         XA1: Series.
         XB: DataFrame.
+        k: Number of nearest elements to return.
+           Defaults to none (just single nearest element).
         **kwargs: Other arguments passed to scipy.cdist, e.g. 
                   `metric='euclidean'`.
     
     Returns:
-        DataFrame with columns for id_B (from XB) and dist.
+        DataFrame with columns for id and corresponding distance of nearest:
+        If k is None: id_B (from XB) and dist.
+        If k is not None: id_b[k] and dist[k] for each k.
     """
-    dist = cdist(XA1.values.reshape(1, -1), XB, **kwargs)[0]
-    return pd.Series({'dist': np.amin(dist), 'id_B': np.argmin(dist)})
+        dist = cdist(XA1.values.reshape(1, -1), XB, **kwargs)[0]
+        if k is None:
+            return pd.Series({'dist': np.amin(dist), 'id_B': np.argmin(dist)})
+        idx = np.argpartition(dist, k)[:k].tolist()
+        distx = dist[idx].tolist()
+        dist_ind = ('dist' + np.char.array(np.arange(1, k+1).astype(str))).tolist()
+        idx_ind = ('id_B' + np.char.array(np.arange(1, k+1).astype(str))).tolist()
+        return pd.Series(idx + distx,
+                         index = idx_ind + dist_ind)
 
 
 def nearest_record(XA, XB, **kwargs):
