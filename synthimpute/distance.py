@@ -201,3 +201,31 @@ def nearest_synth_train_test_record(dist, synth, train, test, verbose=True):
     res = pd.concat([train_record, synth_record, test_record], axis=1, sort=True)
     res.columns = ['train', 'synth', 'test']
     return res
+
+
+def nearest_synth_train_records(dist, synth, train, k, verbose=True):
+    """Produce DataFrame with a synthetic record and nearest records in the
+       train and test sets.
+
+    Args:
+        dist: Record from a distance DataFrame, i.e. produced from 
+              nearest_synth_train_test().
+        synth: Synthetic DataFrame.
+        train: Training DataFrame.
+        k: Number of nearest to consider.
+        verbose: Whether to print the dist record as a sentence. Defaults to True.
+
+    Returns:
+        DataFrame with three columns--synth, train, test--and rows for
+        each column.
+    """
+    if isinstance(dist, pd.DataFrame):
+        dist = dist.iloc[0]
+    if verbose:
+        print(dist)
+    synth_record = synth.iloc[int(dist.id_A)]
+    train_record1 = train.iloc[int(dist.id_B1)]
+    train_record2 = train.iloc[int(dist.id_B2)]
+    res = pd.concat([train_record1, synth_record, train_record2], axis=1, sort=True)
+    res.columns = ['train1', 'synth', 'train2']
+    return res
