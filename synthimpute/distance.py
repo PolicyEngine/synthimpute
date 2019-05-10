@@ -226,6 +226,12 @@ def nearest_synth_train_records(dist, synth, train, k, verbose=True):
     synth_record = synth.iloc[int(dist.id_A)]
     train_record1 = train.iloc[int(dist.id_B1)]
     train_record2 = train.iloc[int(dist.id_B2)]
-    res = pd.concat([train_record1, synth_record, train_record2], axis=1, sort=True)
-    res.columns = ['train1', 'synth', 'train2']
+    if k == 2:
+        res = pd.concat([train_record1, synth_record, train_record2], axis=1, sort=True)
+        res.columns = ['train1', 'synth', 'train2']
+    else:  # Only k=3 right now.
+        train_record3 = train.iloc[int(dist.id_B3)]
+        res = pd.concat([synth_record, train_record1, train_record2, train_record3],
+                        axis=1, sort=True)
+        res.columns = ['synth', 'train1', 'train2', 'train3']
     return res
