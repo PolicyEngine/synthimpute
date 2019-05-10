@@ -203,7 +203,8 @@ def nearest_synth_train_test_record(dist, synth, train, test, verbose=True):
     return res
 
 
-def nearest_synth_train_records(dist, synth, train, k, verbose=True):
+def nearest_synth_train_records(dist, synth, train, k=2, label_distance=True,
+                                verbose=True):
     """Produce DataFrame with a synthetic record and nearest records in the
        train and test sets.
 
@@ -212,7 +213,8 @@ def nearest_synth_train_records(dist, synth, train, k, verbose=True):
               nearest_synth_train_test().
         synth: Synthetic DataFrame.
         train: Training DataFrame.
-        k: Number of nearest to consider.
+        k: Number of nearest to consider. Defaults to 2.
+        label_distance: Add the distance to the column header. Defaults to True.
         verbose: Whether to print the dist record as a sentence. Defaults to True.
 
     Returns:
@@ -228,10 +230,21 @@ def nearest_synth_train_records(dist, synth, train, k, verbose=True):
     train_record2 = train.iloc[int(dist.id_B2)]
     if k == 2:
         res = pd.concat([train_record1, synth_record, train_record2], axis=1, sort=True)
-        res.columns = ['train1', 'synth', 'train2']
+        if label_distance:
+            res.columns = ['train1 (' + str(round(dist.dist1, 2)) + ')',
+                           'synth',
+                           'train2 (' + str(round(dist.dist2, 2)) + ')']
+        else:
+            res.columns = ['train1', 'synth', 'train2']
     else:  # Only k=3 right now.
         train_record3 = train.iloc[int(dist.id_B3)]
         res = pd.concat([synth_record, train_record1, train_record2, train_record3],
                         axis=1, sort=True)
-        res.columns = ['synth', 'train1', 'train2', 'train3']
+        if label_distance:
+            res.columns = ['synth',
+                           'train1 (' + str(round(dist.dist1, 2)) + ')',
+                           'train2 (' + str(round(dist.dist2, 2)) + ')',
+                           'train3 (' + str(round(dist.dist3, 2)) + ')']
+        else:
+            res.columns = ['synth', 'train1', 'train2', 'train3']
     return res
