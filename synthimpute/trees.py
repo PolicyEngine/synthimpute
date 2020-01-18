@@ -1,5 +1,6 @@
 from sklearn.tree import DecisionTreeRegressor
 import pandas as pd
+import numpy as np
 
 def decision_tree_regressor_predict_proba(X_train, y_train, X_test, **kwargs):
     """Trains DecisionTreeRegressor model and predicts probabilities of each y.
@@ -31,3 +32,24 @@ def decision_tree_regressor_predict_proba(X_train, y_train, X_test, **kwargs):
     # Merge with y values and drop node_id.
     return leaf.merge(node_ys_dedup, on='node_id').drop(
         'node_id', axis=1).sort_values(['record_id', 'y'])
+
+
+def rf_quantile(m, X, q):
+    """ Calculates quantiles from random forest model applied to new data.
+    
+    Args:
+        m: sklearn random forests model.
+        X: X matrix.
+        q: Quantile.
+
+    Returns:
+        DataFrame with columns for record_id (row of X_test), y 
+        (predicted value), and prob (of that y value).
+        The sum of prob equals 1 for each record_id.
+    """
+    rf_preds = []
+    for estimator in m.estimators_:
+        rf_preds.append(estimator.predict(X))
+        # One row per record.
+        rf_preds = np.array(rf_preds).transpose()
+    return np.percentile(rf_preds, q * 100, axis=1)
