@@ -36,6 +36,6 @@ def rf_quantile(m, X, q):
     rf_preds = np.array(rf_preds).transpose()  # One row per record.
     # Use simple percentile function if a single quantile.
     if isinstance(q, (int, float)):
-        return percentile(rf_preds, q * 100)
+        return np.percentile(rf_preds, q * 100)
     # percentile_qarray_np is needed for a list of quantiles.
     return percentile_qarray_np(rf_preds, q * 100)
