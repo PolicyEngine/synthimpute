@@ -44,7 +44,8 @@ def rf_quantile(m, X, q):
     return percentile_qarray_np(rf_preds, q * 100)
 
 
-def rf_impute(x_train, y_train, x_new, x_cols=None, random_state=None):
+def rf_impute(x_train, y_train, x_new, x_cols=None, random_state=None,
+              **kwargs):
     """Impute labels from a training set to a new data set using 
        random forests quantile regression.
        
@@ -56,11 +57,14 @@ def rf_impute(x_train, y_train, x_new, x_cols=None, random_state=None):
             x_train (these must also be in x_new).
         random_state: Optional random seed passed to RandomForestRegressor and
             for uniform distribution of quantiles.
+        **kwargs: Other args passed to RandomForestRegressor, e.g. 
+            `n_estimators=50`.  rf_impute uses all RandomForestRegressor
+            defaults unless otherwise specified.
         
     Returns:
         Imputed labels for new_x.
     """
-    rf = ensemble.RandomForestRegressor(random_state=random_state)
+    rf = ensemble.RandomForestRegressor(random_state=random_state, **kwargs)
     rf.fit(x_train, y_train)
     if random_state is not None:
         np.random.seed(random_state)
