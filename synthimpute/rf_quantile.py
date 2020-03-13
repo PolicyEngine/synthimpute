@@ -24,8 +24,9 @@ def rf_quantile(m, X, q):
     Args:
         m: Random forests sklearn model.
         X: New data to predict on.
-        q: Quantile(s) to predict. If multiple quantiles, should be a 
-               list of the same length as the number of rows in X.
+        q: Quantile(s) to predict (between 0 and 1).
+               If multiple quantiles, should be list-like of the same
+               length as the number of rows in X.
 
     Returns:
         A float numpy array of the quantiles, with one row per row of X.
@@ -36,6 +37,6 @@ def rf_quantile(m, X, q):
     rf_preds = np.array(rf_preds).transpose()  # One row per record.
     # Use simple percentile function if a single quantile.
     if isinstance(q, (int, float)):
-        return np.percentile(rf_preds, q * 100)
+        return np.percentile(rf_preds, np.repeat(q * 100, X.shape[0]))
     # percentile_qarray_np is needed for a list of quantiles.
     return percentile_qarray_np(rf_preds, q * 100)
