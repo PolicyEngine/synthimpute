@@ -14,6 +14,8 @@ def test_rf_impute():
     rf = ensemble.RandomForestRegressor(random_state=3)
     rf.fit(x, y)
     median_preds = si.rf_quantile(rf, x, 0.5)
+    assert median_preds.size == N
     # Test multiple quantiles.
     quantiles = np.arange(N) / N
     multiple_q_preds = si.rf_quantile(rf, x, quantiles)
+    assert multiple_q_preds.size == N
