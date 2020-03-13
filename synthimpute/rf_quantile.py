@@ -22,7 +22,7 @@ def rf_quantile(m, X, q):
     """Get quantile predictions from a random forests model.
 
     Args:
-        m: Random forests model.
+        m: Random forests sklearn model.
         X: New data to predict on.
         q: Quantile(s) to predict. If multiple quantiles, should be a 
                list of the same length as the number of rows in X.
