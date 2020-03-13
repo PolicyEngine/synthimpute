@@ -5,7 +5,7 @@ from sklearn import ensemble
 import synthimpute as si
 
 
-def test_rf_impute():
+def test_rf_quantile():
     N = 1000
     x = pd.DataFrame({'x1': np.random.randn(N),
                       'x2': np.random.randn(N)})
