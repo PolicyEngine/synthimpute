@@ -5,16 +5,15 @@ from sklearn import ensemble
 import synthimpute as si
 
 
-def test_tax():
+def test_rf_impute():
     N = 1000
-    train = pd.DataFrame({'x1': np.random.randn(N),
-                          'x2': np.random.randn(N)})
+    x = pd.DataFrame({'x1': np.random.randn(N),
+                      'x2': np.random.randn(N)})
     # Construct example relationship.
-    train['y'] = train.x1 + np.power(train.x2, 3) + np.random.randn(N)
+    y = x.x1 + np.power(x.x2, 3) + np.random.randn(N)
     rf = ensemble.RandomForestRegressor(random_state=3)
-    xcols = ['x1', 'x2']
-    rf.fit(train[xcols], train.y)
-    median_preds = si.rf_quantile(rf, train[xcols], 0.5)
+    rf.fit(x, y)
+    median_preds = si.rf_quantile(rf, x, 0.5)
     # Test multiple quantiles.
     quantiles = np.arange(N) / N
-    multiple_q_preds = si.rf_quantile(rf, train[xcols], quantiles)
+    multiple_q_preds = si.rf_quantile(rf, x, quantiles)
