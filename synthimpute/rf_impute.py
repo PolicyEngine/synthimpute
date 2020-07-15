@@ -45,7 +45,7 @@ def rf_quantile(m, X, q):
 
 
 def rf_impute(x_train, y_train, x_new, x_cols=None, random_state=None,
-              **kwargs):
+              sample_weight_train=None, **kwargs):
     """Impute labels from a training set to a new data set using 
        random forests quantile regression.
        
@@ -57,6 +57,8 @@ def rf_impute(x_train, y_train, x_new, x_cols=None, random_state=None,
             x_train (these must also be in x_new).
         random_state: Optional random seed passed to RandomForestRegressor and
             for uniform distribution of quantiles.
+        sample_weight_train: Vector indicating the weights associated with each
+            row of x_train/y_train. Defaults to None.
         **kwargs: Other args passed to RandomForestRegressor, e.g. 
             `n_estimators=50`.  rf_impute uses all RandomForestRegressor
             defaults unless otherwise specified.
@@ -65,7 +67,10 @@ def rf_impute(x_train, y_train, x_new, x_cols=None, random_state=None,
         Imputed labels for new_x.
     """
     rf = ensemble.RandomForestRegressor(random_state=random_state, **kwargs)
-    rf.fit(x_train, y_train)
+    if sample_weight_train is None:
+        rf.fit(x_train, y_train)
+    else:
+        rf.fit(x_train, y_train, sample_weight=sample_weight_train)
     if random_state is not None:
         np.random.seed(random_state)
     quantiles = np.random.rand(y_train.size)  # Uniform distribution.
