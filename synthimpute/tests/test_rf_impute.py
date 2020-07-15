@@ -5,7 +5,7 @@ from sklearn import ensemble
 
 
 def test_rf_impute():
-    N_TRAIN = 1000
+    N_TRAIN = 2000
     N_NEW = 1000
     n = N_TRAIN + N_NEW
     x = pd.DataFrame({'x1': np.random.randn(n),
