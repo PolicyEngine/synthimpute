@@ -73,5 +73,5 @@ def rf_impute(x_train, y_train, x_new, x_cols=None, random_state=None,
         rf.fit(x_train, y_train, sample_weight=sample_weight_train)
     if random_state is not None:
         np.random.seed(random_state)
-    quantiles = np.random.rand(y_train.size)  # Uniform distribution.
+    quantiles = np.random.rand(x_new.shape[0])  # Uniform distribution.
     return rf_quantile(rf, x_new, quantiles)
