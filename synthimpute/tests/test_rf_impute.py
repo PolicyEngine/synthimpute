@@ -12,7 +12,14 @@ def test_rf_impute():
                       'x2': np.random.randn(n)})
     # Construct example relationship.
     y = x.x1 + np.power(x.x2, 3) + np.random.randn(n)
-    si.rf_impute(x.iloc[:N_TRAIN], y.iloc[:N_TRAIN], x.iloc[N_TRAIN:])
+    # Split into test and train.
+    x_train = x.iloc[:N_TRAIN]
+    y_train = y.iloc[:N_TRAIN]
+    x_test = x.iloc[N_TRAIN:]
+    si.rf_impute(x_train, y_train, x_test)
     # Try with some args.
-    si.rf_impute(x.iloc[:N_TRAIN], y.iloc[:N_TRAIN], x.iloc[N_TRAIN:],
+    si.rf_impute(x_train, y_train, x_test,
                  random_state=10, n_estimators=200)
+    # Try with sample_weight_train.
+    si.rf_impute(x_train, y_train, x_test,
+                 sample_weight_train=np.random.randn(N_TRAIN))
