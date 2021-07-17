@@ -16,7 +16,7 @@ def percentile_qarray_np(dat, q):
     return np.apply_along_axis(
         lambda x: np.percentile(x[1:], x[0]),
         1,
-        np.concatenate([np.array(q)[:, np.newaxis], dat], axis=1)
+        np.concatenate([np.array(q)[:, np.newaxis], dat], axis=1),
     )
 
 
@@ -44,8 +44,15 @@ def rf_quantile(m, X, q):
     return percentile_qarray_np(rf_preds, q * 100)
 
 
-def rf_impute(x_train, y_train, x_new, x_cols=None, random_state=None,
-              sample_weight_train=None, **kwargs):
+def rf_impute(
+    x_train,
+    y_train,
+    x_new,
+    x_cols=None,
+    random_state=None,
+    sample_weight_train=None,
+    **kwargs
+):
     """Impute labels from a training set to a new data set using 
        random forests quantile regression.
        

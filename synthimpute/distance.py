@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from scipy.spatial.distance import cdist
 
+
 def cdist_long(XA, XB, preserve_index=True, **kwargs):
     """Melt the result of scipy.cdist.
     
@@ -17,18 +18,17 @@ def cdist_long(XA, XB, preserve_index=True, **kwargs):
     """
     # Ensure the same column order, pending scipy/scipy#9616.
     XB = XB[XA.columns]
-    res = pd.DataFrame(cdist(XA, XB, **kwargs)).reset_index().melt('index')
-    res.columns = ['id1', 'id2', 'dist']
+    res = pd.DataFrame(cdist(XA, XB, **kwargs)).reset_index().melt("index")
+    res.columns = ["id1", "id2", "dist"]
     # id2 is sometimes returned as an object.
-    res['id2'] = res.id2.astype(int)
+    res["id2"] = res.id2.astype(int)
     if preserve_index:
-        Amap = pd.DataFrame({'id1': np.arange(XA.shape[0]),
-                             'index1': XA.index.values})
-        Bmap = pd.DataFrame({'id2': np.arange(XB.shape[0]),
-                             'index2': XB.index.values})
-        res = res.merge(Amap, on='id1').merge(Bmap, on='id2').drop(
-            ['id1', 'id2'], axis=1)
-        res.columns = ['dist', 'id1', 'id2']
+        Amap = pd.DataFrame({"id1": np.arange(XA.shape[0]), "index1": XA.index.values})
+        Bmap = pd.DataFrame({"id2": np.arange(XB.shape[0]), "index2": XB.index.values})
+        res = (
+            res.merge(Amap, on="id1").merge(Bmap, on="id2").drop(["id1", "id2"], axis=1)
+        )
+        res.columns = ["dist", "id1", "id2"]
     return res
 
 
@@ -44,11 +44,11 @@ def subset_from_row(df, row):
     """
     row_df = pd.DataFrame(row).transpose()
     # Nonstandard merge to retain the index in df.
-    return df.reset_index().merge(row_df).set_index('index')
+    return df.reset_index().merge(row_df).set_index("index")
 
 
 def nearest_record_single(XA1, XB, k=None, **kwargs):
-        """Get the nearest record in XA for each record in XB.
+    """Get the nearest record in XA for each record in XB.
     Args:
         XA1: Series.
         XB: DataFrame.
@@ -62,15 +62,14 @@ def nearest_record_single(XA1, XB, k=None, **kwargs):
         If k is None: id_B (from XB) and dist.
         If k is not None: id_b[k] and dist[k] for each k.
     """
-        dist = cdist(XA1.values.reshape(1, -1), XB, **kwargs)[0]
-        if k is None:
-            return pd.Series({'dist': np.amin(dist), 'id_B': np.argmin(dist)})
-        idx = np.argpartition(dist, k)[:k].tolist()
-        distx = dist[idx].tolist()
-        dist_ind = ('dist' + np.char.array(np.arange(1, k+1).astype(str))).tolist()
-        idx_ind = ('id_B' + np.char.array(np.arange(1, k+1).astype(str))).tolist()
-        return pd.Series(idx + distx,
-                         index = idx_ind + dist_ind)
+    dist = cdist(XA1.values.reshape(1, -1), XB, **kwargs)[0]
+    if k is None:
+        return pd.Series({"dist": np.amin(dist), "id_B": np.argmin(dist)})
+    idx = np.argpartition(dist, k)[:k].tolist()
+    distx = dist[idx].tolist()
+    dist_ind = ("dist" + np.char.array(np.arange(1, k + 1).astype(str))).tolist()
+    idx_ind = ("id_B" + np.char.array(np.arange(1, k + 1).astype(str))).tolist()
+    return pd.Series(idx + distx, index=idx_ind + dist_ind)
 
 
 def nearest_record(XA, XB, k=None, scale=False, **kwargs):
@@ -94,21 +93,20 @@ def nearest_record(XA, XB, k=None, scale=False, **kwargs):
         stds = XA.std()
         XA = (XA - means) / stds
         XB = (XB - means) / stds
-    assert XA.columns.equals(XB.columns), \
-        'XA and XB must have the same columns (in the same order).'
+    assert XA.columns.equals(
+        XB.columns
+    ), "XA and XB must have the same columns (in the same order)."
     res = XA.apply(lambda x: nearest_record_single(x, XB, k, **kwargs), axis=1)
-    res['id_A'] = XA.index
+    res["id_A"] = XA.index
     # id_B is sometimes returned as an object.
-    id_B_cols = [col for col in res if col.startswith('id_B')]
-    dist_cols = [col for col in res if col.startswith('dist')]
+    id_B_cols = [col for col in res if col.startswith("id_B")]
+    dist_cols = [col for col in res if col.startswith("dist")]
     res[id_B_cols] = res[id_B_cols].astype(int)
     # Reorder columns, interleaving IDs and distance.
-    return res[['id_A'] +
-               [val for pair in zip(id_B_cols, dist_cols) for val in pair]]
+    return res[["id_A"] + [val for pair in zip(id_B_cols, dist_cols) for val in pair]]
 
 
-def nearest_synth_train_test(synth, train, test=None, k=None, scale=True,
-                             **kwargs):
+def nearest_synth_train_test(synth, train, test=None, k=None, scale=True, **kwargs):
     """Get the nearest record from synth to each of train and test.
 
     Args:
@@ -147,15 +145,15 @@ def nearest_synth_train_test(synth, train, test=None, k=None, scale=True,
     if test is None:  # We're done.
         return nearest_train
     # This will break if k is not None.
-    nearest_train.columns = ['synth_id', 'train_id', 'train_dist']
+    nearest_train.columns = ["synth_id", "train_id", "train_dist"]
     print("Calculating nearest records to test set...")
     nearest_test = nearest_record(synth, test, k, **kwargs)
-    nearest_test.columns = ['synth_id', 'test_id', 'test_dist']
+    nearest_test.columns = ["synth_id", "test_id", "test_dist"]
     # Merge on synth_id, calculate difference in distances, and return.
-    nearest = nearest_train.merge(nearest_test, on='synth_id')
+    nearest = nearest_train.merge(nearest_test, on="synth_id")
     if k is not None:  # Columns won't align.
-        nearest['dist_diff'] = nearest.train_dist - nearest.test_dist
-        nearest['dist_ratio'] = nearest.train_dist / nearest.test_dist
+        nearest["dist_diff"] = nearest.train_dist - nearest.test_dist
+        nearest["dist_ratio"] = nearest.train_dist / nearest.test_dist
     return nearest
 
 
@@ -168,11 +166,19 @@ def print_dist(r):
     Returns:
         Nothing. Prints the record as a sentence.
     """
-    print("Synthetic record " + str(int(r.synth_id)) +
-          " is closest to training record " +
-          str(int(r.train_id)) + " (distance=" + str(r.train_dist.round(2)) +
-          ") and closest to test record " +
-          str(int(r.test_id)) + " (distance=" + str(r.test_dist.round(2)) + ").")
+    print(
+        "Synthetic record "
+        + str(int(r.synth_id))
+        + " is closest to training record "
+        + str(int(r.train_id))
+        + " (distance="
+        + str(r.train_dist.round(2))
+        + ") and closest to test record "
+        + str(int(r.test_id))
+        + " (distance="
+        + str(r.test_dist.round(2))
+        + ")."
+    )
 
 
 def nearest_synth_train_test_record(dist, synth, train, test, verbose=True):
@@ -199,12 +205,13 @@ def nearest_synth_train_test_record(dist, synth, train, test, verbose=True):
     train_record = train.iloc[int(dist.train_id)]
     test_record = test.iloc[int(dist.test_id)]
     res = pd.concat([train_record, synth_record, test_record], axis=1, sort=True)
-    res.columns = ['train', 'synth', 'test']
+    res.columns = ["train", "synth", "test"]
     return res
 
 
-def nearest_synth_train_records(dist, synth, train, k=2, label_distance=True,
-                                verbose=True):
+def nearest_synth_train_records(
+    dist, synth, train, k=2, label_distance=True, verbose=True
+):
     """Produce DataFrame with a synthetic record and nearest records in the
        train and test sets.
 
@@ -231,20 +238,27 @@ def nearest_synth_train_records(dist, synth, train, k=2, label_distance=True,
     if k == 2:
         res = pd.concat([train_record1, synth_record, train_record2], axis=1, sort=True)
         if label_distance:
-            res.columns = ['train1 (' + str(round(dist.dist1, 2)) + ')',
-                           'synth',
-                           'train2 (' + str(round(dist.dist2, 2)) + ')']
+            res.columns = [
+                "train1 (" + str(round(dist.dist1, 2)) + ")",
+                "synth",
+                "train2 (" + str(round(dist.dist2, 2)) + ")",
+            ]
         else:
-            res.columns = ['train1', 'synth', 'train2']
+            res.columns = ["train1", "synth", "train2"]
     else:  # Only k=3 right now.
         train_record3 = train.iloc[int(dist.id_B3)]
-        res = pd.concat([synth_record, train_record1, train_record2, train_record3],
-                        axis=1, sort=True)
+        res = pd.concat(
+            [synth_record, train_record1, train_record2, train_record3],
+            axis=1,
+            sort=True,
+        )
         if label_distance:
-            res.columns = ['synth',
-                           'train1 (' + str(round(dist.dist1, 2)) + ')',
-                           'train2 (' + str(round(dist.dist2, 2)) + ')',
-                           'train3 (' + str(round(dist.dist3, 2)) + ')']
+            res.columns = [
+                "synth",
+                "train1 (" + str(round(dist.dist1, 2)) + ")",
+                "train2 (" + str(round(dist.dist2, 2)) + ")",
+                "train3 (" + str(round(dist.dist3, 2)) + ")",
+            ]
         else:
-            res.columns = ['synth', 'train1', 'train2', 'train3']
+            res.columns = ["synth", "train1", "train2", "train3"]
     return res

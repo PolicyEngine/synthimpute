@@ -8,8 +8,7 @@ def test_rf_impute():
     N_TRAIN = 2000
     N_NEW = 1000
     n = N_TRAIN + N_NEW
-    x = pd.DataFrame({'x1': np.random.randn(n),
-                      'x2': np.random.randn(n)})
+    x = pd.DataFrame({"x1": np.random.randn(n), "x2": np.random.randn(n)})
     # Construct example relationship.
     y = x.x1 + np.power(x.x2, 3) + np.random.randn(n)
     # Split into test and train.
@@ -18,8 +17,6 @@ def test_rf_impute():
     x_test = x.iloc[N_TRAIN:]
     si.rf_impute(x_train, y_train, x_test)
     # Try with some args.
-    si.rf_impute(x_train, y_train, x_test,
-                 random_state=10, n_estimators=200)
+    si.rf_impute(x_train, y_train, x_test, random_state=10, n_estimators=200)
     # Try with sample_weight_train.
-    si.rf_impute(x_train, y_train, x_test,
-                 sample_weight_train=np.random.randn(N_TRAIN))
+    si.rf_impute(x_train, y_train, x_test, sample_weight_train=np.random.randn(N_TRAIN))

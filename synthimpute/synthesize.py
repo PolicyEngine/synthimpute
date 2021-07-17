@@ -2,8 +2,16 @@ from sklearn import ensemble
 import numpy as np
 import synthimpute as si
 
-def rf_synth(X, seed_cols, classification_cols=None, n=None, trees=100,
-             random_state=0, synth_cols=None):
+
+def rf_synth(
+    X,
+    seed_cols,
+    classification_cols=None,
+    n=None,
+    trees=100,
+    random_state=0,
+    synth_cols=None,
+):
     """Synthesize data via random forests.
 
     Args:
@@ -25,17 +33,23 @@ def rf_synth(X, seed_cols, classification_cols=None, n=None, trees=100,
         n = X.shape[0]
     synth = X.copy()[seed_cols].sample(n=n, replace=True, random_state=random_state)
     # Initialize random forests model object.
-    rf = ensemble.RandomForestRegressor(n_estimators=trees,
-                                        min_samples_leaf=1,
-                                        random_state=random_state,
-                                        n_jobs=-1)  # Use maximum number of cores.
+    rf = ensemble.RandomForestRegressor(
+        n_estimators=trees, min_samples_leaf=1, random_state=random_state, n_jobs=-1
+    )  # Use maximum number of cores.
     # Loop through each variable.
     if synth_cols is None:
         synth_cols = list(set(X.columns) - set(seed_cols))
     np.random.seed(random_state)
     for i, col in enumerate(synth_cols):
-        print('Synthesizing feature ' + str(i + 1) + ' of ' +
-              str(len(synth_cols)) + ': ' + col + '...')
+        print(
+            "Synthesizing feature "
+            + str(i + 1)
+            + " of "
+            + str(len(synth_cols))
+            + ": "
+            + col
+            + "..."
+        )
         rf.fit(X[synth.columns], X[col])
         synth[col] = si.rf_quantile(rf, synth, np.random.rand(n))
     return synth.reset_index(drop=True)[X.columns]
