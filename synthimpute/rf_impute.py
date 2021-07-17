@@ -51,6 +51,7 @@ def rf_impute(
     x_cols=None,
     random_state=None,
     sample_weight_train=None,
+    mean_quantile=0.5,
     **kwargs
 ):
     """Impute labels from a training set to a new data set using 
@@ -66,6 +67,8 @@ def rf_impute(
             for uniform distribution of quantiles.
         sample_weight_train: Vector indicating the weights associated with each
             row of x_train/y_train. Defaults to None.
+        mean_quantile: The mean quantile to use, via a Beta distribution.
+            Defaults to 0.5.
         **kwargs: Other args passed to RandomForestRegressor, e.g. 
             `n_estimators=50`.  rf_impute uses all RandomForestRegressor
             defaults unless otherwise specified.
@@ -78,7 +81,9 @@ def rf_impute(
         rf.fit(x_train, y_train)
     else:
         rf.fit(x_train, y_train, sample_weight=sample_weight_train)
-    if random_state is not None:
-        np.random.seed(random_state)
-    quantiles = np.random.rand(x_new.shape[0])  # Uniform distribution.
+    # Set alpha parameter of Beta(a, 1) distribution.
+    a = mean_quantile / (1 - mean_quantile)
+    # Generate quantiles from Beta(a, 1) distribution.
+    rng = np.random.default_rng(random_state)
+    quantiles = rng.beta(a, 1, x_new.shape[0])
     return rf_quantile(rf, x_new, quantiles)
