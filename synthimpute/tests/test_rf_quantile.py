@@ -7,8 +7,7 @@ import synthimpute as si
 
 def test_rf_quantile():
     N = 1000
-    x = pd.DataFrame({'x1': np.random.randn(N),
-                      'x2': np.random.randn(N)})
+    x = pd.DataFrame({"x1": np.random.randn(N), "x2": np.random.randn(N)})
     # Construct example relationship.
     y = x.x1 + np.power(x.x2, 3) + np.random.randn(N)
     rf = ensemble.RandomForestRegressor(random_state=3)

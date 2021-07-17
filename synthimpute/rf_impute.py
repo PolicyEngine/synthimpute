@@ -16,7 +16,7 @@ def percentile_qarray_np(dat, q):
     return np.apply_along_axis(
         lambda x: np.percentile(x[1:], x[0]),
         1,
-        np.concatenate([np.array(q)[:, np.newaxis], dat], axis=1)
+        np.concatenate([np.array(q)[:, np.newaxis], dat], axis=1),
     )
 
 
@@ -44,8 +44,16 @@ def rf_quantile(m, X, q):
     return percentile_qarray_np(rf_preds, q * 100)
 
 
-def rf_impute(x_train, y_train, x_new, x_cols=None, random_state=None,
-              sample_weight_train=None, **kwargs):
+def rf_impute(
+    x_train,
+    y_train,
+    x_new,
+    x_cols=None,
+    random_state=None,
+    sample_weight_train=None,
+    mean_quantile=0.5,
+    **kwargs
+):
     """Impute labels from a training set to a new data set using 
        random forests quantile regression.
        
@@ -59,6 +67,8 @@ def rf_impute(x_train, y_train, x_new, x_cols=None, random_state=None,
             for uniform distribution of quantiles.
         sample_weight_train: Vector indicating the weights associated with each
             row of x_train/y_train. Defaults to None.
+        mean_quantile: The mean quantile to use, via a Beta distribution.
+            Defaults to 0.5.
         **kwargs: Other args passed to RandomForestRegressor, e.g. 
             `n_estimators=50`.  rf_impute uses all RandomForestRegressor
             defaults unless otherwise specified.
@@ -71,7 +81,9 @@ def rf_impute(x_train, y_train, x_new, x_cols=None, random_state=None,
         rf.fit(x_train, y_train)
     else:
         rf.fit(x_train, y_train, sample_weight=sample_weight_train)
-    if random_state is not None:
-        np.random.seed(random_state)
-    quantiles = np.random.rand(x_new.shape[0])  # Uniform distribution.
+    # Set alpha parameter of Beta(a, 1) distribution.
+    a = mean_quantile / (1 - mean_quantile)
+    # Generate quantiles from Beta(a, 1) distribution.
+    rng = np.random.default_rng(random_state)
+    quantiles = rng.beta(a, 1, x_new.shape[0])
     return rf_quantile(rf, x_new, quantiles)
