@@ -14,7 +14,6 @@ setup(
         "pandas",
         "scikit-learn",
         "statsmodels",
-        "microdf",
         "scipy",
     ],
     zip_safe=False,
