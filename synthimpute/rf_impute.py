@@ -1,5 +1,6 @@
 import numpy as np
 from sklearn import ensemble
+from scipy.optimize import bisect
 
 
 def percentile_qarray_np(dat, q):
@@ -87,3 +88,71 @@ def rf_impute(
     rng = np.random.default_rng(random_state)
     quantiles = rng.beta(a, 1, x_new.shape[0])
     return rf_quantile(rf, x_new, quantiles)
+
+
+def rf_impute_match(
+    x_train,
+    y_train,
+    x_new,
+    train_weight=None,
+    new_weight=None,
+    new_target: float = None,
+    random_state: float = None,
+    **kwargs
+):
+    """Impute labels to a new dataset using random forest quantile regression
+    on a training set.
+
+    Args:
+        x_train: The training predictors. If a MicroDataFrame or MicroSeries is
+            passed, train weights are captured automatically
+        y_train: The training labels. If a MicroDataFrame or MicroSeries is passed,
+            train weights and the new target are captured automatically
+        x_new: The new predictors. If a MicroDataFrame or MicroSeries is passed,
+            new weights are captured automatically
+        train_weight (optional): Weights for x_train. Defaults to None.
+        new_weight (optional): Weights for x_new. Defaults to None.
+        new_target (float, optional): The target aggregate to match using the
+            quantile distribution parameters. Defaults to None.
+        random_state (float, optional): The random state to use for reproducible
+            results. Defaults to None.
+
+    Returns:
+        Imputed labels for x_new
+    """
+    if all(
+        map(
+            lambda arg: type(arg).__name__
+            in ("MicroDataFrame", "MicroSeries"),
+            (x_train, y_train, x_new),
+        )
+    ):
+        train_weight = x_train.weights
+        new_weight = x_new.weights
+        new_target = y_train.sum()
+        x_train = x_train.values
+        y_train = y_train.values
+        x_new = x_new.values
+    rf = ensemble.RandomForestRegressor(
+        random_state=random_state, n_estimators=10, **kwargs
+    )
+    if train_weight is None:
+        rf.fit(x_train, y_train)
+    else:
+        rf.fit(x_train, y_train, sample_weight=train_weight)
+    rng = np.random.default_rng(random_state)
+
+    def aggregate_error(mean_quantile):
+        a = mean_quantile / (1 - mean_quantile)
+        quantiles = rng.beta(a, 1, x_new.shape[0])
+        pred = rf_quantile(rf, x_new, quantiles)
+        pred_agg = (pred * new_weight).sum()
+        error = pred_agg - new_target
+        return error
+
+    mean_quantile = bisect(aggregate_error, 0.01, 0.99, rtol=0.05)
+    a = mean_quantile / (1 - mean_quantile)
+    rng = np.random.default_rng(random_state)
+    quantiles = rng.beta(a, 1, x_new.shape[0])
+    pred = rf_quantile(rf, x_new, quantiles)
+    return pred
