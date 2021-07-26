@@ -9,6 +9,12 @@ setup(
     author_email="mghenis@gmail.com",
     license="MIT",
     packages=["synthimpute"],
-    install_requires=["numpy", "pandas", "scikit-learn", "statsmodels"],
+    install_requires=[
+        "numpy",
+        "pandas",
+        "scikit-learn",
+        "statsmodels",
+        "scipy",
+    ],
     zip_safe=False,
 )
