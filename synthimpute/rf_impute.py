@@ -107,7 +107,7 @@ def rf_impute(
         x_new = x_new.values
     if rf_model is None:
         rf = ensemble.RandomForestRegressor(
-            random_state=random_state, n_estimators=10, **kwargs
+            random_state=random_state, **kwargs
         )
     else:
         rf = rf_model
