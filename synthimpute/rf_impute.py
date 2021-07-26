@@ -54,7 +54,7 @@ def rf_impute(
     sample_weight_train=None,
     new_weight=None,
     target=None,
-    mean_quantile=None,
+    mean_quantile=0.5,
     rtol: float = 0.05,
     rf_model: ensemble.RandomForestRegressor = None,
     **kwargs
@@ -118,7 +118,7 @@ def rf_impute(
     # Set alpha parameter of Beta(a, 1) distribution.
     # Generate quantiles from Beta(a, 1) distribution.
     rng = np.random.default_rng(random_state)
-    if mean_quantile is not None:
+    if target is None:
         a = mean_quantile / (1 - mean_quantile)
         quantiles = rng.beta(a, 1, x_new.shape[0])
         return rf_quantile(rf, x_new, quantiles)
