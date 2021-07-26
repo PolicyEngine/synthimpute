@@ -109,12 +109,12 @@ def rf_impute(
         rf = ensemble.RandomForestRegressor(
             random_state=random_state, **kwargs
         )
+        if sample_weight_train is None:
+            rf.fit(x_train, y_train)
+        else:
+            rf.fit(x_train, y_train, sample_weight=sample_weight_train)
     else:
         rf = rf_model
-    if sample_weight_train is None:
-        rf.fit(x_train, y_train)
-    else:
-        rf.fit(x_train, y_train, sample_weight=sample_weight_train)
     # Set alpha parameter of Beta(a, 1) distribution.
     # Generate quantiles from Beta(a, 1) distribution.
     rng = np.random.default_rng(random_state)
@@ -130,12 +130,10 @@ def rf_impute(
             pred = rf_quantile(rf, x_new, quantiles)
             pred_agg = (pred * new_weight).sum()
             error = pred_agg - target
-            print(a, pred_agg / 1e9, error / 1e9)
             return error
 
         mean_quantile = bisect(aggregate_error, 0.01, 0.99, rtol=rtol)
         a = mean_quantile / (1 - mean_quantile)
-        rng = np.random.default_rng(random_state)
         quantiles = rng.beta(a, 1, x_new.shape[0])
         pred = rf_quantile(rf, x_new, quantiles)
         return pred
