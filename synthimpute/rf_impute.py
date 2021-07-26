@@ -106,7 +106,9 @@ def rf_impute(
         y_train = y_train.values
         x_new = x_new.values
     if rf_model is None:
-        rf = ensemble.RandomForestRegressor(random_state=random_state, n_estimators=10, **kwargs)
+        rf = ensemble.RandomForestRegressor(
+            random_state=random_state, n_estimators=10, **kwargs
+        )
     else:
         rf = rf_model
     if sample_weight_train is None:
@@ -121,13 +123,14 @@ def rf_impute(
         quantiles = rng.beta(a, 1, x_new.shape[0])
         return rf_quantile(rf, x_new, quantiles)
     else:
+
         def aggregate_error(mean_quantile):
             a = mean_quantile / (1 - mean_quantile)
             quantiles = rng.beta(a, 1, x_new.shape[0])
             pred = rf_quantile(rf, x_new, quantiles)
             pred_agg = (pred * new_weight).sum()
             error = pred_agg - target
-            print(a, pred_agg / 1e+9, error / 1e+9)
+            print(a, pred_agg / 1e9, error / 1e9)
             return error
 
         mean_quantile = bisect(aggregate_error, 0.01, 0.99, rtol=rtol)
