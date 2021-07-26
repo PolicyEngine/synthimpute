@@ -82,7 +82,7 @@ def rf_impute(
             Defaults to 0.5.
         rtol (float): The relative tolerance for matching the target aggregate.
             Defaults to 0.05.
-        rf_model (ensemble.RandomForestRegressor): The pretrained model to use.
+        rf_model (ensemble.RandomForestRegressor): The fitted model to use.
             Defaults to None.
         **kwargs: Other args passed to RandomForestRegressor, e.g.
             `n_estimators=50`.  rf_impute uses all RandomForestRegressor
