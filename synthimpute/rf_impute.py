@@ -118,11 +118,7 @@ def rf_impute(
     # Set alpha parameter of Beta(a, 1) distribution.
     # Generate quantiles from Beta(a, 1) distribution.
     rng = np.random.default_rng(random_state)
-    if target is None:
-        a = mean_quantile / (1 - mean_quantile)
-        quantiles = rng.beta(a, 1, x_new.shape[0])
-        return rf_quantile(rf, x_new, quantiles)
-    else:
+    if target is not None:
 
         def aggregate_error(mean_quantile):
             a = mean_quantile / (1 - mean_quantile)
@@ -133,7 +129,22 @@ def rf_impute(
             return error
 
         mean_quantile = bisect(aggregate_error, 0.01, 0.99, rtol=rtol)
-        a = mean_quantile / (1 - mean_quantile)
-        quantiles = rng.beta(a, 1, x_new.shape[0])
-        pred = rf_quantile(rf, x_new, quantiles)
-        return pred
+    return get_result(rf, x_new, mean_quantile, rng)
+
+
+def get_result(rf, x_new, mean_quantile, rng):
+    """Generates the resulting array from a random forest regression model
+    using a specified mean quantile.
+
+    Args:
+        rf: The random forest model (fitted)
+        x_new: New input values
+        mean_quantile: The mean quantile using the Beta distribution
+        rng: The random number generator
+
+    Returns:
+        Imputed labels for x_new
+    """
+    a = mean_quantile / (1 - mean_quantile)
+    quantiles = rng.beta(a, 1, x_new.shape[0])
+    return rf_quantile(rf, x_new, quantiles)
