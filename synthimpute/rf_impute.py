@@ -56,7 +56,7 @@ def rf_impute(
     target=None,
     mean_quantile=0.5,
     rtol: float = 0.05,
-    rf_model: ensemble.RandomForestRegressor = None,
+    rf: ensemble.RandomForestRegressor = None,
     **kwargs
 ):
     """Impute labels from a training set to a new data set using
@@ -82,7 +82,7 @@ def rf_impute(
             Defaults to 0.5.
         rtol (float): The relative tolerance for matching the target aggregate.
             Defaults to 0.05.
-        rf_model (ensemble.RandomForestRegressor): The fitted model to use.
+        rf (ensemble.RandomForestRegressor): The fitted model to use.
             Defaults to None.
         **kwargs: Other args passed to RandomForestRegressor, e.g.
             `n_estimators=50`.  rf_impute uses all RandomForestRegressor
@@ -105,7 +105,7 @@ def rf_impute(
         x_train = x_train.values
         y_train = y_train.values
         x_new = x_new.values
-    if rf_model is None:
+    if rf is None:
         rf = ensemble.RandomForestRegressor(
             random_state=random_state, **kwargs
         )
@@ -113,17 +113,13 @@ def rf_impute(
             rf.fit(x_train, y_train)
         else:
             rf.fit(x_train, y_train, sample_weight=sample_weight_train)
-    else:
-        rf = rf_model
     # Set alpha parameter of Beta(a, 1) distribution.
     # Generate quantiles from Beta(a, 1) distribution.
     rng = np.random.default_rng(random_state)
     if target is not None:
 
         def aggregate_error(mean_quantile):
-            a = mean_quantile / (1 - mean_quantile)
-            quantiles = rng.beta(a, 1, x_new.shape[0])
-            pred = rf_quantile(rf, x_new, quantiles)
+            pred = get_result(rf, x_new, mean_quantile, rng)
             pred_agg = (pred * new_weight).sum()
             error = pred_agg - target
             return error
