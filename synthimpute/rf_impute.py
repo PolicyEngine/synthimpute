@@ -69,8 +69,6 @@ def rf_impute(
             train weights and the new target are captured automatically
         x_new: The new predictors. If a MicroDataFrame or MicroSeries is passed,
             new weights are captured automatically
-        x_cols: List of columns to use. If not provided, uses all columns from
-            x_train (these must also be in x_new).
         random_state: Optional random seed passed to RandomForestRegressor and
             for uniform distribution of quantiles.
         sample_weight_train: Vector indicating the weights associated with each
@@ -91,27 +89,6 @@ def rf_impute(
     Returns:
         Imputed labels for new_x.
     """
-    # If labels are multidimensional, impute each separately
-    if isinstance(y_train, pd.DataFrame):
-        return pd.DataFrame(
-            {
-                col: rf_impute(
-                    x_train,
-                    y_train[col],
-                    x_new,
-                    random_state,
-                    sample_weight_train,
-                    new_weight,
-                    target,
-                    mean_quantile,
-                    rtol,
-                    rf,
-                    **kwargs,
-                )
-                for col in y_train.columns
-            }
-        )
-
     # If Micro(Series, DataFrame) passed, extract weights
     if all(
         map(
@@ -127,6 +104,26 @@ def rf_impute(
         x_train = x_train.values
         y_train = y_train.values
         x_new = x_new.values
+
+    # If labels are multidimensional, impute each separately
+    if isinstance(y_train, pd.DataFrame):
+        result = pd.DataFrame()
+        for i in range(len(y_train.columns)):
+            not_yet_predicted_cols = y_train.columns[i:]
+            result[y_train.columns[i]] = rf_impute(
+                x_train.drop(not_yet_predicted_cols, axis=1),
+                y_train[y_train.columns[i]],
+                x_new.drop(not_yet_predicted_cols, axis=1),
+                random_state,
+                sample_weight_train,
+                new_weight,
+                target,
+                mean_quantile,
+                rtol,
+                rf,
+                **kwargs
+            )
+        return result
 
     if rf is None:
         rf = ensemble.RandomForestRegressor(
