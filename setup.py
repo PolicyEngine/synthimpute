@@ -16,5 +16,10 @@ setup(
         "statsmodels",
         "scipy",
     ],
+    extras_require={
+        "dev": {
+            "black",
+        }
+    },
     zip_safe=False,
 )

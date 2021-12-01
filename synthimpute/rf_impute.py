@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn import ensemble
 from scipy.optimize import bisect
+import pandas as pd
 
 
 def percentile_qarray_np(dat, q):
@@ -49,7 +50,6 @@ def rf_impute(
     x_train,
     y_train,
     x_new,
-    x_cols=None,
     random_state=None,
     sample_weight_train=None,
     new_weight=None,
@@ -91,6 +91,28 @@ def rf_impute(
     Returns:
         Imputed labels for new_x.
     """
+    # If labels are multidimensional, impute each separately
+    if isinstance(y_train, pd.DataFrame):
+        return pd.DataFrame(
+            {
+                col: rf_impute(
+                    x_train,
+                    y_train[col],
+                    x_new,
+                    random_state,
+                    sample_weight_train,
+                    new_weight,
+                    target,
+                    mean_quantile,
+                    rtol,
+                    rf,
+                    **kwargs,
+                )
+                for col in y_train.columns
+            }
+        )
+
+    # If Micro(Series, DataFrame) passed, extract weights
     if all(
         map(
             lambda arg: type(arg).__name__
@@ -105,6 +127,7 @@ def rf_impute(
         x_train = x_train.values
         y_train = y_train.values
         x_new = x_new.values
+
     if rf is None:
         rf = ensemble.RandomForestRegressor(
             random_state=random_state, **kwargs
