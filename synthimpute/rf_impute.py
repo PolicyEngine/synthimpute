@@ -1,6 +1,9 @@
 import numpy as np
+from pandas.core.frame import DataFrame
 from sklearn import ensemble
 from scipy.optimize import bisect
+import pandas as pd
+from tqdm import trange
 
 
 def percentile_qarray_np(dat, q):
@@ -49,7 +52,6 @@ def rf_impute(
     x_train,
     y_train,
     x_new,
-    x_cols=None,
     random_state=None,
     sample_weight_train=None,
     new_weight=None,
@@ -57,7 +59,8 @@ def rf_impute(
     mean_quantile=0.5,
     rtol: float = 0.05,
     rf: ensemble.RandomForestRegressor = None,
-    **kwargs
+    verbose: bool = False,
+    **kwargs,
 ):
     """Impute labels from a training set to a new data set using
        random forests quantile regression.
@@ -69,8 +72,6 @@ def rf_impute(
             train weights and the new target are captured automatically
         x_new: The new predictors. If a MicroDataFrame or MicroSeries is passed,
             new weights are captured automatically
-        x_cols: List of columns to use. If not provided, uses all columns from
-            x_train (these must also be in x_new).
         random_state: Optional random seed passed to RandomForestRegressor and
             for uniform distribution of quantiles.
         sample_weight_train: Vector indicating the weights associated with each
@@ -84,6 +85,7 @@ def rf_impute(
             Defaults to 0.05.
         rf (ensemble.RandomForestRegressor): The fitted model to use.
             Defaults to None.
+        verbose (bool): Whether to print progress. Defaults to False.
         **kwargs: Other args passed to RandomForestRegressor, e.g.
             `n_estimators=50`.  rf_impute uses all RandomForestRegressor
             defaults unless otherwise specified.
@@ -91,6 +93,57 @@ def rf_impute(
     Returns:
         Imputed labels for new_x.
     """
+
+    # If labels are multidimensional, impute each separately
+    if isinstance(y_train, pd.DataFrame):
+        result = pd.DataFrame()
+        task = (
+            trange(len(y_train.columns), desc="Imputing columns")
+            if verbose
+            else range(len(y_train.columns))
+        )
+        for i in task:
+            column = y_train.columns[i]
+            not_yet_predicted_cols = y_train.columns[i:]
+
+            x_train_expanded = pd.concat(
+                [x_train, y_train.drop(not_yet_predicted_cols, axis=1)],
+                axis=1,
+            )
+            if type(x_train).__name__ == "MicroDataFrame":
+                x_train_expanded = type(x_train)(
+                    x_train_expanded, weights=x_train.weights
+                )
+
+            x_new_expanded = pd.concat([x_new, result], axis=1)
+
+            if type(x_new).__name__ == "MicroDataFrame":
+                x_new_expanded = type(x_new)(
+                    x_new_expanded, weights=x_new.weights
+                )
+
+            if verbose:
+                task.set_description(
+                    f"Imputing column {column} (targeting {int(target or y_train[column].sum()/1e9):,}bn)"
+                )
+
+            result[y_train.columns[i]] = rf_impute(
+                x_train=x_train_expanded,
+                y_train=y_train[column],
+                x_new=x_new_expanded,
+                random_state=random_state,
+                sample_weight_train=sample_weight_train,
+                new_weight=new_weight,
+                target=target,
+                mean_quantile=mean_quantile,
+                rtol=rtol,
+                rf=rf,
+                verbose=verbose,
+                **kwargs,
+            )
+        return result
+
+    # If Micro(Series, DataFrame) passed, extract weights
     if all(
         map(
             lambda arg: type(arg).__name__
@@ -100,11 +153,17 @@ def rf_impute(
     ):
         sample_weight_train = x_train.weights
         new_weight = x_new.weights
+
         if target is None:
             target = y_train.sum()
-        x_train = x_train.values
-        y_train = y_train.values
-        x_new = x_new.values
+
+    cast_to_array = (
+        lambda x: x.values if isinstance(x, (pd.Series, pd.DataFrame)) else x
+    )
+    x_train = cast_to_array(x_train)
+    y_train = cast_to_array(y_train)
+    x_new = cast_to_array(x_new)
+
     if rf is None:
         rf = ensemble.RandomForestRegressor(
             random_state=random_state, **kwargs

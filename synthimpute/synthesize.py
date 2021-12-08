@@ -17,7 +17,7 @@ def rf_synth(
     Args:
         X: Data to synthesize, as a pandas DataFrame.
         seed_cols: Columns to seed the synthesis, via sampling with replacement.
-        classification_cols: Optional list of numeric columns to synthesize via classification. 
+        classification_cols: Optional list of numeric columns to synthesize via classification.
                              String columns are classified by default.
         n: Number of records to produce. Defaults to the number of records in X.
         trees: Number of trees in each model (n_estimators).
@@ -31,10 +31,15 @@ def rf_synth(
     # Start with the seed synthesis.
     if n is None:
         n = X.shape[0]
-    synth = X.copy()[seed_cols].sample(n=n, replace=True, random_state=random_state)
+    synth = X.copy()[seed_cols].sample(
+        n=n, replace=True, random_state=random_state
+    )
     # Initialize random forests model object.
     rf = ensemble.RandomForestRegressor(
-        n_estimators=trees, min_samples_leaf=1, random_state=random_state, n_jobs=-1
+        n_estimators=trees,
+        min_samples_leaf=1,
+        random_state=random_state,
+        n_jobs=-1,
     )  # Use maximum number of cores.
     # Loop through each variable.
     if synth_cols is None:

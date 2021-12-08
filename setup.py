@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="synthimpute",
-    version="0.1",
+    version="0.2.0",
     description="Python package for data synthesis and imputation using parametric and nonparametric methods, and evaluation of these methods.",
     url="http://github.com/PSLmodels/synthimpute",
     author="Max Ghenis",
@@ -15,6 +15,16 @@ setup(
         "scikit-learn",
         "statsmodels",
         "scipy",
+        "tqdm",
     ],
+    extras_require={
+        "dev": {
+            "black",
+            "flake8",
+            "pytest",
+            "wheel",
+            "coverage",
+        }
+    },
     zip_safe=False,
 )
