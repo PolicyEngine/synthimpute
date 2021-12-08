@@ -60,7 +60,7 @@ def rf_impute(
     rtol: float = 0.05,
     rf: ensemble.RandomForestRegressor = None,
     verbose: bool = False,
-    **kwargs
+    **kwargs,
 ):
     """Impute labels from a training set to a new data set using
        random forests quantile regression.
@@ -103,26 +103,33 @@ def rf_impute(
             else range(len(y_train.columns))
         )
         for i in task:
+            column = y_train.columns[i]
             not_yet_predicted_cols = y_train.columns[i:]
-            
+
             x_train_expanded = pd.concat(
                 [x_train, y_train.drop(not_yet_predicted_cols, axis=1)],
                 axis=1,
             )
             if type(x_train).__name__ == "MicroDataFrame":
-                x_train_expanded = type(x_train)(x_train_expanded, weights=x_train.weights)
-            
+                x_train_expanded = type(x_train)(
+                    x_train_expanded, weights=x_train.weights
+                )
+
             x_new_expanded = pd.concat([x_new, result], axis=1)
 
             if type(x_new).__name__ == "MicroDataFrame":
-                x_new_expanded = type(x_new)(x_new_expanded, weights=x_new.weights)
+                x_new_expanded = type(x_new)(
+                    x_new_expanded, weights=x_new.weights
+                )
 
             if verbose:
-                task.set_description(f"Imputing column {y_train.columns[i]} (targeting {int(target or y_train[y_train.columns[i]].sum()/1e9):,}bn)")
+                task.set_description(
+                    f"Imputing column {column} (targeting {int(target or y_train[column].sum()/1e9):,}bn)"
+                )
 
             result[y_train.columns[i]] = rf_impute(
                 x_train=x_train_expanded,
-                y_train=y_train[y_train.columns[i]],
+                y_train=y_train[column],
                 x_new=x_new_expanded,
                 random_state=random_state,
                 sample_weight_train=sample_weight_train,
@@ -132,7 +139,7 @@ def rf_impute(
                 rtol=rtol,
                 rf=rf,
                 verbose=verbose,
-                **kwargs
+                **kwargs,
             )
         return result
 
@@ -146,7 +153,7 @@ def rf_impute(
     ):
         sample_weight_train = x_train.weights
         new_weight = x_new.weights
-    
+
         if target is None:
             target = y_train.sum()
 
