@@ -15,10 +15,15 @@ setup(
         "scikit-learn",
         "statsmodels",
         "scipy",
+        "tqdm",
     ],
     extras_require={
         "dev": {
             "black",
+            "flake8",
+            "pytest",
+            "wheel",
+            "coverage",
         }
     },
     zip_safe=False,
