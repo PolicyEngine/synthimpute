@@ -4,7 +4,7 @@ import pandas as pd
 
 def decision_tree_regressor_predict_proba(X_train, y_train, X_test, **kwargs):
     """Trains DecisionTreeRegressor model and predicts probabilities of each y.
-    
+
     Args:
         X_train: Training features.
         y_train: Training labels.
@@ -12,7 +12,7 @@ def decision_tree_regressor_predict_proba(X_train, y_train, X_test, **kwargs):
         **kwargs: Other arguments passed to DecisionTreeRegressor.
 
     Returns:
-        DataFrame with columns for record_id (row of X_test), y 
+        DataFrame with columns for record_id (row of X_test), y
         (predicted value), and prob (of that y value).
         The sum of prob equals 1 for each record_id.
     """

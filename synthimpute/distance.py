@@ -5,14 +5,14 @@ from scipy.spatial.distance import cdist
 
 def cdist_long(XA, XB, preserve_index=True, **kwargs):
     """Melt the result of scipy.cdist.
-    
+
     Args:
         XA: DataFrame 1.
         XB: DataFrame 2.
         preserve_index: Preserve index values from XA and XB. If False, row
                         numbers are returned instead. Defaults to True.
         **kwargs: Other arguments passed to scipy.cdist.
-        
+
     Returns:
         DataFrame with id1, id2, and dist.
     """
@@ -23,10 +23,16 @@ def cdist_long(XA, XB, preserve_index=True, **kwargs):
     # id2 is sometimes returned as an object.
     res["id2"] = res.id2.astype(int)
     if preserve_index:
-        Amap = pd.DataFrame({"id1": np.arange(XA.shape[0]), "index1": XA.index.values})
-        Bmap = pd.DataFrame({"id2": np.arange(XB.shape[0]), "index2": XB.index.values})
+        Amap = pd.DataFrame(
+            {"id1": np.arange(XA.shape[0]), "index1": XA.index.values}
+        )
+        Bmap = pd.DataFrame(
+            {"id2": np.arange(XB.shape[0]), "index2": XB.index.values}
+        )
         res = (
-            res.merge(Amap, on="id1").merge(Bmap, on="id2").drop(["id1", "id2"], axis=1)
+            res.merge(Amap, on="id1")
+            .merge(Bmap, on="id2")
+            .drop(["id1", "id2"], axis=1)
         )
         res.columns = ["dist", "id1", "id2"]
     return res
@@ -34,11 +40,11 @@ def cdist_long(XA, XB, preserve_index=True, **kwargs):
 
 def subset_from_row(df, row):
     """Subset a DataFrame based on values from a row.
-    
+
     Args:
         df: DataFrame.
         row: Row to subset based on.
-        
+
     Returns:
         DataFrame subsetting df based on values in row.
     """
@@ -54,9 +60,9 @@ def nearest_record_single(XA1, XB, k=None, **kwargs):
         XB: DataFrame.
         k: Number of nearest elements to return.
            Defaults to none (just single nearest element).
-        **kwargs: Other arguments passed to scipy.cdist, e.g. 
+        **kwargs: Other arguments passed to scipy.cdist, e.g.
                   `metric='euclidean'`.
-    
+
     Returns:
         DataFrame with columns for id and corresponding distance of nearest:
         If k is None: id_B (from XB) and dist.
@@ -67,8 +73,12 @@ def nearest_record_single(XA1, XB, k=None, **kwargs):
         return pd.Series({"dist": np.amin(dist), "id_B": np.argmin(dist)})
     idx = np.argpartition(dist, k)[:k].tolist()
     distx = dist[idx].tolist()
-    dist_ind = ("dist" + np.char.array(np.arange(1, k + 1).astype(str))).tolist()
-    idx_ind = ("id_B" + np.char.array(np.arange(1, k + 1).astype(str))).tolist()
+    dist_ind = (
+        "dist" + np.char.array(np.arange(1, k + 1).astype(str))
+    ).tolist()
+    idx_ind = (
+        "id_B" + np.char.array(np.arange(1, k + 1).astype(str))
+    ).tolist()
     return pd.Series(idx + distx, index=idx_ind + dist_ind)
 
 
@@ -103,10 +113,14 @@ def nearest_record(XA, XB, k=None, scale=False, **kwargs):
     dist_cols = [col for col in res if col.startswith("dist")]
     res[id_B_cols] = res[id_B_cols].astype(int)
     # Reorder columns, interleaving IDs and distance.
-    return res[["id_A"] + [val for pair in zip(id_B_cols, dist_cols) for val in pair]]
+    return res[
+        ["id_A"] + [val for pair in zip(id_B_cols, dist_cols) for val in pair]
+    ]
 
 
-def nearest_synth_train_test(synth, train, test=None, k=None, scale=True, **kwargs):
+def nearest_synth_train_test(
+    synth, train, test=None, k=None, scale=True, **kwargs
+):
     """Get the nearest record from synth to each of train and test.
 
     Args:
@@ -117,7 +131,7 @@ def nearest_synth_train_test(synth, train, test=None, k=None, scale=True, **kwar
         scale: Whether to scale the datasets by means and standard deviations
                in `train`. This avoids using standardized distance metrics
                which will scale datasets differently. Defaults to True.
-        **kwargs: Other arguments passed to scipy.cdist, e.g. 
+        **kwargs: Other arguments passed to scipy.cdist, e.g.
                   `metric='euclidean'`.
 
     Returns:
@@ -186,7 +200,7 @@ def nearest_synth_train_test_record(dist, synth, train, test, verbose=True):
        train and test sets.
 
     Args:
-        dist: Record from a distance DataFrame, i.e. produced from 
+        dist: Record from a distance DataFrame, i.e. produced from
               nearest_synth_train_test().
         synth: Synthetic DataFrame.
         train: Training DataFrame.
@@ -204,7 +218,9 @@ def nearest_synth_train_test_record(dist, synth, train, test, verbose=True):
     synth_record = synth.iloc[int(dist.synth_id)]
     train_record = train.iloc[int(dist.train_id)]
     test_record = test.iloc[int(dist.test_id)]
-    res = pd.concat([train_record, synth_record, test_record], axis=1, sort=True)
+    res = pd.concat(
+        [train_record, synth_record, test_record], axis=1, sort=True
+    )
     res.columns = ["train", "synth", "test"]
     return res
 
@@ -216,7 +232,7 @@ def nearest_synth_train_records(
        train and test sets.
 
     Args:
-        dist: Record from a distance DataFrame, i.e. produced from 
+        dist: Record from a distance DataFrame, i.e. produced from
               nearest_synth_train_test().
         synth: Synthetic DataFrame.
         train: Training DataFrame.
@@ -236,7 +252,9 @@ def nearest_synth_train_records(
     train_record1 = train.iloc[int(dist.id_B1)]
     train_record2 = train.iloc[int(dist.id_B2)]
     if k == 2:
-        res = pd.concat([train_record1, synth_record, train_record2], axis=1, sort=True)
+        res = pd.concat(
+            [train_record1, synth_record, train_record2], axis=1, sort=True
+        )
         if label_distance:
             res.columns = [
                 "train1 (" + str(round(dist.dist1, 2)) + ")",
