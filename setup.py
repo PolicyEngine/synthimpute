@@ -2,11 +2,11 @@ from setuptools import setup
 
 setup(
     name="synthimpute",
-    version="0.2.0",
+    version="0.3.0",
     description="Python package for data synthesis and imputation using parametric and nonparametric methods, and evaluation of these methods.",
-    url="http://github.com/PSLmodels/synthimpute",
+    url="http://github.com/PolicyEngine/synthimpute",
     author="Max Ghenis",
-    author_email="mghenis@gmail.com",
+    author_email="max@policyengine.org",
     license="MIT",
     packages=["synthimpute"],
     install_requires=[
