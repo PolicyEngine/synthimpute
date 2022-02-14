@@ -1,34 +1,56 @@
-# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
-name: Python package
-
+name: Push
 on:
   push:
-    branches: [ master ]
-
+    branches: [master]
 jobs:
-  build:
+  Lint:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check formatting
+        uses: "lgeiger/black-action@master"
+        with:
+          args: ". -l 79 --check"
+  Test:
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: [3.7, 3.8, 3.9]
+        os: [ubuntu-latest, windows-latest]
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install package
-      run: make install
-    - name: Test package
-      run: make test
-    - name: Build package
-      run: make build-package
-    - name: Publish to PyPI
-      if: github.repository == 'PolicyEngine/synthimpute'
-      uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        user: __token__
-        password: ${{ secrets.PYPI }}
-        skip_existing: true
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Install package
+        run: make install
+      - name: Run tests
+        run: make test
+      - uses: codecov/codecov-action@v2
+      - name: Test documentation builds
+        if: matrix.os == 'ubuntu-latest'
+        run: make documentation
+      - name: Deploy documentation
+        if: matrix.os == 'ubuntu-latest'
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: docs/book/_build/html
+  Publish:
+    if: github.repository == 'PolicyEngine/synthimpute'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.10
+      - name: Publish a git tag
+        run: ".github/publish-git-tag.sh || true"
+      - name: Install package
+        run: make install
+      - name: Build package
+        run: make
