@@ -102,3 +102,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Built Jupyter-book documentation
+docs/book/_build

@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="synthimpute",
-    version="0.3.0",
+    version="0.3.1",
     description="Python package for data synthesis and imputation using parametric and nonparametric methods, and evaluation of these methods.",
     url="http://github.com/PolicyEngine/synthimpute",
     author="Max Ghenis",
