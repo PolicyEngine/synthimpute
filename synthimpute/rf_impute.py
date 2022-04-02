@@ -80,6 +80,8 @@ def rf_impute(
         new_weight: Vector indicating the weights associated with each
             row of x_new. Defaults to None.
         target: Numerical target for the weighted sum of y_new.
+        ignore_target: If True, the target is ignored and the optimisation process for
+            selecting the mean quantile is skipped.
         mean_quantile: The mean quantile to use, via a Beta distribution.
             Defaults to 0.5.
         rtol (float): The relative tolerance for matching the target aggregate.
