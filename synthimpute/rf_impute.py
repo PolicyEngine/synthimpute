@@ -56,6 +56,7 @@ def rf_impute(
     sample_weight_train=None,
     new_weight=None,
     target=None,
+    ignore_target=False,
     mean_quantile=0.5,
     rtol: float = 0.05,
     rf: ensemble.RandomForestRegressor = None,
@@ -79,6 +80,8 @@ def rf_impute(
         new_weight: Vector indicating the weights associated with each
             row of x_new. Defaults to None.
         target: Numerical target for the weighted sum of y_new.
+        ignore_target: If True, the target is ignored and the optimisation process for
+            selecting the mean quantile is skipped.
         mean_quantile: The mean quantile to use, via a Beta distribution.
             Defaults to 0.5.
         rtol (float): The relative tolerance for matching the target aggregate.
@@ -139,6 +142,7 @@ def rf_impute(
                 rtol=rtol,
                 rf=rf,
                 verbose=verbose,
+                ignore_target=ignore_target,
                 **kwargs,
             )
         return result
@@ -175,7 +179,7 @@ def rf_impute(
     # Set alpha parameter of Beta(a, 1) distribution.
     # Generate quantiles from Beta(a, 1) distribution.
     rng = np.random.default_rng(random_state)
-    if target is not None:
+    if target is not None and not ignore_target:
 
         def aggregate_error(mean_quantile):
             pred = get_result(rf, x_new, mean_quantile, rng)
