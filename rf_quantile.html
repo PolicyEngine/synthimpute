@@ -4,11 +4,13 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>rf_quantile demo &#8212; synthimpute</title>
     
-  <link href="_static/css/theme.css" rel="stylesheet">
-  <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -18,20 +20,16 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
-    
-      
-
-    
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
-    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
     
-  <link rel="preload" as="script" href="_static/js/index.be7d3bbb2ef33a8344ce.js">
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -39,19 +37,20 @@
     <script src="_static/doctools.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="_static/sphinx-book-theme.d59cb220de22ca1c485ebbdc042f0030.js"></script>
+    <script src="_static/design-tabs.js"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
 const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="nearest_synth_train_test example" href="nearest_synth_test_train.html" />
@@ -70,7 +69,21 @@ const thebe_selector_output = ".output, .cell_output"
                 </script>
 
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
     
     <div class="container-fluid" id="banner"></div>
 
@@ -79,9 +92,10 @@ const thebe_selector_output = ".output, .cell_output"
     <div class="container-xl">
       <div class="row">
           
-<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
-    
-        <div class="navbar-brand-box">
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
     <a class="navbar-brand text-wrap" href="index.html">
       
       
@@ -94,14 +108,15 @@ const thebe_selector_output = ".output, .cell_output"
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item active">
-        <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="index.html">
-   synthimpute
-  </a>
- </li>
-</ul>
-<p aria-level="2" class="caption" role="heading">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    synthimpute
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
   Examples
  </span>
@@ -140,109 +155,226 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 
     </div>
-</nav> <!-- To handle the deprecated key -->
-
-<div class="navbar_extra_footer">
-  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
-</div>
-
-</div>
-
-
-          
-
-
-          
-<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
-    
-    <div class="topbar container-xl fixed-top">
-    <div class="topbar-contents row">
-        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
-        <div class="col pl-md-4 topbar-main">
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
             
-            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
-                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
-                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
-                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
-                <i class="fas fa-bars"></i>
-                <i class="fas fa-arrow-left"></i>
-                <i class="fas fa-arrow-up"></i>
-            </button>
-            
-            
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
-            class="fas fa-download"></i></button>
-
-    <div class="dropdown-buttons">
-        <!-- ipynb file if we had a myst markdown file -->
-        
-        <!-- Download raw file -->
-        <a class="dropdown-buttons" href="_sources/rf_quantile.ipynb"><button type="button"
-                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.ipynb</button></a>
-        <!-- Download PDF via print -->
-        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
-                onclick="printPdf(this)" data-toggle="tooltip" data-placement="left">.pdf</button>
-    </div>
-</div>
-
-            <!-- Source interaction buttons -->
-
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
-        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
-    <div class="dropdown-buttons sourcebuttons">
-        <a class="repository-button"
-            href="https://github.com/PolicyEngine/synthimpute"><button type="button" class="btn btn-secondary topbarbtn"
-                data-toggle="tooltip" data-placement="left" title="Source repository"><i
-                    class="fab fa-github"></i>repository</button></a>
-        <a class="issues-button"
-            href="https://github.com/PolicyEngine/synthimpute/issues/new?title=Issue%20on%20page%20%2Frf_quantile.html&body=Your%20issue%20content%20here."><button
-                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
-                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
-        <a class="edit-button" href="https://github.com/PolicyEngine/synthimpute/edit/master/docs/book/rf_quantile.ipynb"><button
-                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
-                title="Edit this page"><i class="fas fa-pencil-alt"></i>suggest edit</button></a>
-    </div>
-</div>
-
-            <!-- Full screen (wrap in <a> to have style consistency -->
-
-<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
-        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
-        title="Fullscreen mode"><i
-            class="fas fa-expand"></i></button></a>
-
-            <!-- Launch buttons -->
-
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
-        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
-    <div class="dropdown-buttons">
-        
-        <a class="binder-button" href="https://mybinder.org/v2/gh/PolicyEngine/synthimpute/master?urlpath=tree/docs/book/rf_quantile.ipynb"><button type="button"
-                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
-                data-placement="left"><img class="binder-button-logo"
-                    src="_static/images/logo_binder.svg"
-                    alt="Interact on binder">Binder</button></a>
-        
-        
-        
-        
-    </div>
-</div>
-
-        </div>
-
-        <!-- Table of contents -->
-        <div class="d-none d-md-block col-md-2 bd-toc show noprint">
-            
-            <div class="tocsection onthispage pt-5 pb-3">
-                <i class="fas fa-list"></i> Contents
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
             </div>
-            <nav id="bd-toc-nav" aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/PolicyEngine/synthimpute/master?urlpath=tree/docs/book/rf_quantile.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/PolicyEngine/synthimpute"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/PolicyEngine/synthimpute/issues/new?title=Issue%20on%20page%20%2Frf_quantile.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/PolicyEngine/synthimpute/edit/master/docs/book/rf_quantile.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Edit this page"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="headerbtn__text-container">suggest edit</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/rf_quantile.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#setup">
    Setup
@@ -255,12 +387,11 @@ const thebe_selector_output = ".output, .cell_output"
  </li>
 </ul>
 
-            </nav>
-        </div>
-    </div>
+    </nav>
 </div>
-    <div id="main-content" class="row">
-        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
                 <h1>rf_quantile demo</h1>
@@ -289,14 +420,15 @@ const thebe_selector_output = ".output, .cell_output"
                     </div>
                 </div>
             </div>
-            
+            <main id="main-content" role="main">
+                
               <div>
                 
-  <div class="tex2jax_ignore mathjax_ignore section" id="rf-quantile-demo">
-<h1><code class="docutils literal notranslate"><span class="pre">rf_quantile</span></code> demo<a class="headerlink" href="#rf-quantile-demo" title="Permalink to this headline">¶</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="rf-quantile-demo">
+<h1><code class="docutils literal notranslate"><span class="pre">rf_quantile</span></code> demo<a class="headerlink" href="#rf-quantile-demo" title="Permalink to this headline">#</a></h1>
 <p>Predict conditional quantiles of a variable using the <code class="docutils literal notranslate"><span class="pre">rf_quantile</span></code> function.</p>
-<div class="section" id="setup">
-<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
+<section id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">synthimpute</span> <span class="k">as</span> <span class="nn">si</span>
@@ -307,9 +439,9 @@ const thebe_selector_output = ".output, .cell_output"
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="generate-data">
-<h2>Generate data<a class="headerlink" href="#generate-data" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="generate-data">
+<h2>Generate data<a class="headerlink" href="#generate-data" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ensemble</span><span class="o">.</span><span class="n">RandomForestRegressor</span><span class="p">()</span>
@@ -335,262 +467,262 @@ const thebe_selector_output = ".output, .cell_output"
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([-8.78245474e-01,  5.64308155e+00,  1.16939837e+00, -3.21513723e-01,
-       -1.84854750e+00, -3.36819069e+00, -5.20815615e-01, -3.28622756e-01,
-        8.57628193e-01,  8.85111451e-01, -4.00294206e+00,  1.39661114e+00,
-       -3.39152805e+00, -1.55153283e+01,  1.46228208e+00,  6.38002120e-01,
-       -1.12019318e-01, -5.24825866e-01,  1.59795746e+00, -1.38827746e+00,
-        7.38429046e-01, -2.80064862e+00,  1.85493977e+00, -3.15872847e+00,
-        4.55346249e-01,  5.69711323e-01, -9.18448821e-02, -9.98710511e-01,
-       -8.34441623e-01,  3.79643504e+00, -1.39030639e+00,  1.03057919e+00,
-       -3.34105097e-01,  1.41994316e+00, -1.06106019e+00,  3.15976832e+01,
-        2.09236012e-01, -8.79369775e-01,  4.50988381e-01,  1.44810198e+00,
-       -1.18201139e+00,  3.46728743e+00, -5.22319035e-01,  1.17946706e+00,
-        4.33542291e+00,  5.69711323e-01, -9.58494835e-01,  1.10830859e+00,
-       -2.07631548e+00, -1.23129000e-01, -1.23662400e+00,  3.46728743e+00,
-       -1.06791727e+00,  1.23412378e+00, -2.25962446e+00, -1.89073266e+00,
-       -1.22908022e+00,  2.46319718e+00,  3.91258005e-01, -7.06537024e-01,
-       -1.35655431e+00, -6.33765698e+00,  2.22187261e+00,  1.05431950e+00,
-        1.85264891e+00,  6.02471023e-01, -3.26890414e-01, -8.37775138e-01,
-       -2.61643066e+00, -1.19092579e+00, -9.07717109e+00, -2.09585448e+00,
-       -2.39825636e+00, -1.16976509e+00, -1.26161486e+01, -4.23804607e-01,
-       -2.79144012e+00,  1.56809209e+00,  1.49569782e+00, -8.05276162e+00,
-       -2.94434569e+00,  1.09889213e+00, -8.78245474e-01,  1.98202041e+00,
-        4.25992671e+00, -2.80064862e+00,  7.74011298e-01,  9.00200889e-01,
-        7.79427114e+00, -7.51359842e+00, -1.00473474e+00,  3.40754006e-01,
-       -1.75079540e+00,  2.23152532e+00,  2.01615459e-01, -1.11720046e+00,
-       -3.10437713e+00,  3.10403622e+00, -4.58845234e+00, -7.76167654e-01,
-        2.24446696e+00, -8.98182605e+00, -3.96571223e-01, -1.62052500e+00,
-        2.26093454e+00, -2.99682030e+00, -7.46551754e-01, -1.68315394e+00,
-       -9.87746226e-01, -2.36783642e+00,  2.09233970e-01,  2.95261448e-01,
-        8.62973753e+00,  9.02810010e-01, -2.81639470e-01, -2.12332408e-01,
-       -2.60547037e+01, -4.81689155e-01,  1.07948919e+00, -1.61394724e+00,
-        8.55392390e-01, -1.45690386e+00, -1.00219885e+01, -1.06806143e-02,
-       -2.95080437e-01, -2.45963860e-01, -4.82000852e+00, -5.70391508e-01,
-       -1.49506546e-01, -2.60046321e-01, -3.48041585e+00,  1.41462494e+00,
-       -9.21729561e-01,  3.04657186e-01,  1.56809209e+00, -1.26161486e+01,
-       -1.19096030e+00, -2.52061401e+00, -2.29190840e+00, -2.37201058e+00,
-       -1.31450122e+00,  1.41669923e+00,  2.03481549e+01, -1.85457056e+00,
-       -5.08330295e+00,  3.42528531e+00,  9.93788703e-01,  9.05413835e+00,
-       -1.30114788e+00,  1.14299554e+00, -2.95916411e+00,  3.80484865e+00,
-        1.00422738e-01,  4.80256629e-02, -1.10143194e-01, -9.11729442e-03,
-        1.12840392e+00,  8.98985118e-01,  9.00566718e-01, -3.17328238e+00,
-       -6.62303412e-01, -1.48931385e+00, -2.51490923e+00,  1.26257110e+00,
-       -8.80132679e+00,  3.98802255e+00,  1.44462866e+01,  1.34870778e+00,
-       -8.61078034e-01, -1.52952670e+00, -1.23014798e+00, -3.54432663e-01,
-       -1.27574544e+00,  1.81094496e-01,  9.05413835e+00, -3.45111773e-01,
-        4.07681154e-01,  2.60521040e+00, -7.14218261e+00, -2.52061401e+00,
-       -1.68278962e+00, -1.80570038e+00,  4.85026417e-01, -1.39030639e+00,
-        1.33272085e+00, -5.45634729e-01,  1.16465512e+00, -4.10756746e+00,
-       -2.94434569e+00, -1.76322189e+00,  4.46733864e-01,  9.60678894e-01,
-        1.44810198e+00, -2.36783642e+00,  9.71302725e-01, -1.89073266e+00,
-        5.40678537e+00, -1.00754585e+00,  1.08878856e+00, -1.38827746e+00,
-        1.38978293e+00, -3.92346896e-01,  8.62973753e+00, -1.45448385e+00,
-       -5.08330295e+00, -2.32557510e-01,  2.96887806e+00, -1.04714619e+00,
-        1.77963591e-01, -4.53446644e+00, -1.11581060e+01, -1.62052500e+00,
-        6.26580959e-01,  3.40760549e+00, -4.60263786e-01,  9.26529274e+00,
-        2.10392441e+00, -1.00219885e+01, -3.55993676e+00,  6.67154777e-01,
-        1.35182328e+00, -5.09886898e-01,  1.73890181e+00, -1.06791727e+00,
-       -2.42112409e+00,  8.57628193e-01,  1.73890181e+00, -4.20203839e+00,
-       -6.80112680e-01,  1.03119554e+00, -7.98757640e-01,  1.54713157e-01,
-       -3.49907832e+00, -1.39907383e+00, -2.70953732e-01, -1.67751906e+00,
-       -2.00409351e+00,  1.35182328e+00,  5.20385919e+00,  1.35121264e+00,
-        7.43504862e+00,  8.19125446e+00, -1.82959864e+01, -1.72413912e+00,
-       -9.98786208e-01, -1.83981706e-01, -8.38455509e-01, -1.63018556e+00,
-        9.97787797e-01, -9.42787297e-01,  2.03033172e+00, -7.46551754e-01,
-        1.47182750e-01,  1.53094967e+00, -7.76167654e-01, -2.46419680e+00,
-        1.05346438e+00,  1.06849915e+00, -7.98863968e-01,  1.50244908e+00,
-       -8.94620602e-01,  1.08878856e+00,  9.93788703e-01,  1.93928146e+00,
-        2.14448212e-01,  1.59795746e+00, -2.07821201e-01, -1.92502435e+00,
-        9.19529747e-01, -9.53448376e+00,  1.43339639e+00,  3.04228802e+00,
-       -2.95916411e+00, -2.52061401e+00,  4.95093752e+00, -4.35589276e-01,
-       -1.77320905e+00,  3.49522404e+00,  1.47595033e-01,  2.39708728e+00,
-       -1.19474094e+00, -1.01192730e-01, -1.34872707e+00,  1.05648029e+00,
-        2.36431351e+00, -7.46551754e-01,  2.48574126e+00,  3.42834309e-01,
-        6.01424427e+00, -3.54432663e-01, -6.52210334e+00, -1.93213960e+01,
-        1.93466834e-01, -1.39907383e+00,  1.09889213e+00, -5.31568388e-01,
-        3.63814718e+00,  1.44462866e+01,  5.22327173e+00,  8.01356773e-01,
-        5.81711439e+00,  1.05346438e+00,  3.55154717e-01,  1.07948919e+00,
-       -2.38606438e-01,  1.40885235e+00, -1.39030639e+00, -1.85457056e+00,
-       -1.83335547e+01, -2.56536182e+00,  5.81711439e+00, -5.20815615e-01,
-       -1.45448385e+00, -5.70391508e-01,  8.78051398e+00,  1.13408374e+00,
-       -9.33795874e+00, -6.86118489e-01,  2.90562386e+00, -1.01955786e+01,
-        3.06051879e+00, -1.01955786e+01, -7.29288933e-01, -4.50077130e-01,
-       -2.61999619e+00,  4.33542291e+00, -9.42787297e-01,  3.99770456e+00,
-        5.64308155e+00, -1.38827746e+00,  2.41838461e+00, -1.81507987e-01,
-       -3.64812212e+00,  2.09236012e-01, -1.07760253e+00, -5.39968480e-01,
-        2.82321478e-01,  4.83636827e-02, -1.17951318e+01, -1.24163797e-01,
-        2.23297417e+00,  2.35024014e-02, -4.29505493e+00, -3.80214462e-01,
-       -1.30087329e+00, -8.38589247e-01, -1.96597778e+00,  9.97787797e-01,
-        3.68601534e-01, -5.81894451e-02, -9.85540950e-01, -2.38606438e-01,
-       -2.28129599e+00, -1.16567249e+00,  2.39611104e+00,  3.65677973e+00,
-       -1.77691975e+00, -1.11581060e+01,  2.24568068e-01, -1.04131191e+00,
-       -1.74188788e+00,  9.97475375e-03, -2.70953732e-01, -2.80064862e+00,
-       -6.72349464e-01,  8.06957946e-01,  8.01356773e-01,  5.64308155e+00,
-       -3.03847636e+00,  8.98741316e-01, -1.16059498e-01, -1.25127968e-01,
-       -1.65126142e+00, -2.01190450e+00,  7.38429046e-01,  1.50244908e+00,
-        1.43729297e+00,  2.61818039e+00,  1.58678457e+00, -8.98182605e+00,
-       -2.55964577e+00, -5.71909047e-01, -7.47175813e-01,  6.85355511e-01,
-        8.42836104e-01,  1.23412378e+00,  2.43228474e+00,  1.16465512e+00,
-        1.05889442e+01, -3.28622756e-01,  3.15441834e+00,  1.03921824e+00,
-       -2.00409351e+00,  2.00128715e+00, -2.54656455e-01,  4.56602207e-01,
-       -2.24986548e+00, -2.84400029e-01, -1.22664731e+00,  2.59707491e+00,
-        2.00988864e-01,  1.37998696e+00, -1.00219885e+01,  1.30125048e+00,
-       -2.93881781e-01, -2.24986548e+00,  1.18929620e+00, -1.80570038e+00,
-        1.77896704e-01, -1.18260115e+00, -3.46077061e-01, -1.26149215e+00,
-        5.82863032e-01,  4.33542291e+00,  1.64269036e+00,  9.97475375e-03,
-       -2.28129599e+00, -3.83659713e-01,  1.11127660e+00,  1.34622529e+01,
-        9.16452127e-01,  1.92471374e+00,  6.89771925e-01, -1.85457056e+00,
-       -5.22319035e-01, -1.22096198e+01, -9.07114001e-01,  8.42836104e-01,
-        8.98225359e-03, -2.26596340e-01, -1.25596657e+00,  6.54752662e-01,
-        7.27379600e-01,  4.46733864e-01,  9.60678894e-01, -2.45963860e-01,
-        1.73279575e+00, -2.20105612e+00, -1.62052500e+00,  2.43228474e+00,
-       -5.56738838e+00,  3.49522404e+00,  1.52962299e+00, -3.87293726e+00,
-        8.62973753e+00,  1.25449003e-01,  1.39961249e+00,  1.05570404e+00,
-        3.62447670e+00, -2.56882695e+00,  5.56117832e-01,  6.40059342e-01,
-       -3.04347840e-01, -1.42083395e+00, -8.47272196e-01,  1.78815901e+00,
-        2.46102441e+00,  7.79664558e-03,  4.95715684e+00,  7.22507943e-01,
-        3.87827335e+00,  2.42826434e+01,  1.93027909e+00,  3.78060346e+00,
-       -1.47944152e+00, -2.00409351e+00, -9.18448821e-02, -2.36301073e+00,
-        1.58722435e-02,  1.10231429e+00, -9.11729442e-03,  1.52935074e+00,
-        3.49522404e+00,  4.25651400e-02,  2.04296467e-02, -6.89770571e-01,
-       -1.28919782e+00,  2.39611104e+00, -5.20815615e-01,  2.84278424e-01,
-        3.95387477e+00,  9.84084214e-01, -8.38455509e-01, -2.81449107e+00,
-       -3.28622756e-01,  1.49569782e+00,  2.04581084e-01,  1.05648029e+00,
-        5.82863032e-01, -4.64157338e-01, -1.49506546e-01,  3.18874175e-02,
-        1.50244908e+00, -2.50150507e-01,  2.42912624e+01,  7.60253988e-01,
-       -2.79144012e+00,  3.99376949e-01, -2.37461560e+00,  6.02471023e-01,
-       -3.55993676e+00,  6.89771925e-01, -1.84510221e+00,  1.77126094e+00,
-        2.95261448e-01, -4.25358436e-01,  1.49244493e+00,  8.06852373e-01,
-        1.59795746e+00,  1.85210159e+00, -4.81689155e-01,  9.64576649e-01,
-        1.26257110e+00,  2.89049545e-01,  1.44820057e+00, -3.37953728e+00,
-       -1.05471102e+00,  3.02059629e+00, -7.26232307e+00, -6.39925546e-02,
-        1.03057919e+00, -2.22349389e+00,  4.77915447e+00, -5.72696290e-01,
-        5.69711323e-01,  8.87007776e-01, -2.60547037e+01,  1.48820174e+00,
-        1.08885775e-01,  2.99695705e+00, -1.42731602e+00, -4.29505493e+00,
-        4.95093752e+00,  3.58958035e-01,  2.42375454e+00, -1.47221643e-01,
-        6.01424427e+00,  7.79664558e-03, -4.59136660e-01, -1.96597778e+00,
-        1.53566768e+00,  1.24357735e+00, -1.08211220e+00,  8.57715360e-01,
-       -6.99042803e-01,  7.90870497e-01, -2.10683837e+00, -2.59279102e+00,
-        1.06184792e-01,  2.02474917e+00,  1.24357735e+00, -1.65126142e+00,
-       -1.56504859e-01, -9.87746226e-01,  7.79014987e-01, -2.24986548e+00,
-       -1.96766688e+01,  1.55185806e+00, -3.45111773e-01, -3.10437713e+00,
-        2.42449462e+00, -3.84600257e+00, -2.39689845e+00, -1.07760253e+00,
-       -6.61540169e-01, -3.48172292e+00,  2.36280477e+00, -4.31804838e-01,
-        3.95387477e+00,  3.83803171e-01, -1.01192730e-01, -2.23608798e+00,
-       -4.29505493e+00,  3.20875754e+00, -1.59765214e+00,  9.03139309e+00,
-        1.07325191e-01,  1.01341629e+00,  1.07698642e+00,  1.55185806e+00,
-        7.71556678e-01,  7.40327843e-01, -2.72161066e+00, -2.72278459e-01,
-        4.30717797e-02, -2.69153340e+00, -8.27556489e+00, -1.30345369e+00,
-       -3.04347840e-01, -2.33020023e-01,  5.81711439e+00,  1.46868834e+00,
-       -8.07450614e-01, -1.05493112e+00,  3.39612658e-01, -2.60547037e+01,
-        1.50871457e+00, -6.25520964e-01, -1.20817571e+00, -2.56536182e+00,
-       -2.05924976e+00, -5.17545572e+00,  4.50207222e-01,  3.78060346e+00,
-       -1.65126142e+00,  1.23412378e+00,  3.18874175e-02,  2.02474917e+00,
-       -8.22160492e-01, -5.18985518e-01,  4.55346249e-01, -8.22160492e-01,
-        6.16232663e-02,  1.89961883e+00,  2.11312502e+00, -2.59279102e+00,
-       -8.93135738e-01,  9.93788703e-01,  2.11691885e+00, -1.36670432e+00,
-        6.38002120e-01,  1.73890181e+00, -2.58037824e+00, -2.28129599e+00,
-       -2.22349389e+00,  1.76404487e+00,  1.76404487e+00,  1.54697539e+00,
-       -9.87746226e-01,  1.79498940e+00,  2.04069245e+01, -6.72349464e-01,
-       -7.76167654e-01, -1.43039552e+00,  1.17647098e+01,  3.47277326e+00,
-       -7.76167654e-01,  6.40059342e-01,  1.48820174e+00,  4.57811841e-01,
-        8.74450271e-01,  1.93466834e-01, -3.60588044e+00, -1.24163797e-01,
-        1.12840392e+00,  2.30895067e-01,  1.59795746e+00, -1.38827746e+00,
-       -1.01192730e-01, -1.79153509e+00,  3.18440884e+00,  3.04177554e+00,
-       -1.38827746e+00, -5.64180093e-01,  5.20385919e+00,  3.28822601e+00,
-       -2.93881781e-01, -2.94121640e-01,  1.49557155e-01, -2.20105612e+00,
-        9.97475375e-03, -9.87746226e-01, -1.99438702e+00, -1.38557401e+00,
-        1.43348382e+00,  1.44462866e+01,  7.27379600e-01,  1.81094496e-01,
-       -1.68278962e+00,  1.03937239e+00, -3.15872847e+00,  4.48331511e+00,
-       -1.40357533e+00,  4.29779533e-01, -2.06914236e+00, -3.98381551e+00,
-        1.00676144e+00, -2.06914236e+00, -4.47614020e+00, -1.72413912e+00,
-       -8.55322392e-01, -1.24670819e+00, -2.64139819e-01, -6.49389738e+00,
-       -2.05930862e-01, -4.64157338e-01, -3.48122965e+00,  7.27379600e-01,
-       -6.86118489e-01,  7.79427114e+00,  1.47915785e-01, -3.26650439e-02,
-        1.04565511e+00,  2.14323208e-01,  7.87665551e-01,  1.65988895e+00,
-        5.56117832e-01,  9.97787797e-01, -9.16840228e+00,  1.35182328e+00,
-        2.84757180e+00, -1.91947399e+00,  4.22791748e+00, -1.00219885e+01,
-        9.00200889e-01, -7.03964941e-01,  7.43504862e+00, -2.64059265e-01,
-        1.71124008e+00,  1.16802969e+00,  5.86455350e+00,  6.40053320e+00,
-        1.49569782e+00,  2.03481549e+01, -1.61638637e+00,  2.11691885e+00,
-        8.14303500e-01, -2.60547037e+01,  4.23538040e-01,  9.65967510e-01,
-        3.48881707e-02,  1.23412378e+00, -2.91539705e+00,  9.19529747e-01,
-        5.69711323e-01, -8.38589247e-01,  8.36271878e-01, -1.28919782e+00,
-        1.88438053e+00, -1.61613168e+00,  1.24984535e+00, -1.83335547e+01,
-       -4.05112844e-02, -1.71807536e+00, -5.64180093e-01, -4.00294206e+00,
-        1.67433120e+00,  3.29144275e-01,  3.49522404e+00, -6.13315540e-01,
-       -7.56832399e-01, -2.72161066e+00, -2.84770926e+00, -8.14786018e-01,
-       -1.84854750e+00, -7.56711994e-01,  1.40154541e+00, -1.04807974e+00,
-       -2.38606438e-01, -1.35224062e+00, -4.10756746e+00, -1.28253946e+00,
-       -2.73494125e-01,  4.48331511e+00, -4.81689155e-01,  6.26580959e-01,
-        2.25456011e+00, -1.81687256e+00,  1.20172902e+00,  6.63563415e-01,
-       -1.24718551e+00,  3.32075318e+00, -3.83659713e-01,  2.48166323e-01,
-        1.41669923e+00,  2.11372993e+00, -1.26930349e+00, -1.16134546e+00,
-       -1.01859576e+00, -3.39152805e+00,  8.71895820e-01,  2.04069245e+01,
-       -7.70106034e-01, -2.78986811e-01,  3.04691887e-01,  3.37031055e+00,
-       -2.36783642e+00, -2.92721559e+00, -6.94643700e-01,  8.74450271e-01,
-        4.33542291e+00,  7.69427554e-01, -6.02387479e+00, -5.03384066e-01,
-        1.00676144e+00, -9.87746226e-01,  4.78972829e+00,  1.45697460e+00,
-       -3.64812212e+00, -3.37953728e+00, -1.84510221e+00, -2.10683837e+00,
-       -1.84854750e+00, -5.50277548e-01, -3.10437713e+00, -1.81573829e-01,
-        6.00647389e-01, -3.82360082e+00, -2.54430558e-01,  1.26364562e+00,
-        5.75658871e-01,  4.17650095e-01,  1.06676141e+00, -1.18290225e+00,
-       -2.33020023e-01, -2.36783642e+00, -2.36301073e+00, -2.74412404e+00,
-        3.59153134e+00, -4.94777072e-01, -2.88475156e-01, -1.18201139e+00,
-       -9.79775968e-01,  3.37562266e+00,  3.54645371e+00,  3.92752164e-01,
-       -1.34872707e+00,  5.09928734e+00,  1.77967783e-01, -1.04131191e+00,
-        5.64062341e-01, -6.13315540e-01,  9.05413835e+00,  1.83717847e+00,
-       -1.60926133e-01,  6.33490212e-01,  1.00676144e+00,  1.18929620e+00,
-       -1.34393410e+01,  1.37998696e+00,  1.85264891e+00,  7.27379600e-01,
-        1.53094967e+00, -4.24925052e-02,  2.39932763e-01,  3.99770456e+00,
-       -1.95742819e+00,  2.03481549e+01, -2.06426274e+00, -5.98852197e+00,
-        1.89655262e+00,  5.22327173e+00, -1.49506546e-01,  3.89501226e-01,
-       -6.83311244e-01, -8.38589247e-01, -3.83897653e+00, -8.87563693e-01,
-        4.33542291e+00,  1.58107163e+00, -4.40317279e+00,  1.15249613e+00,
-       -7.70106034e-01, -7.51359197e-02, -4.12394576e-01, -1.16567249e+00,
-       -2.98128531e+00, -3.10461484e+01, -4.87256095e-01,  6.38611490e-02,
-       -3.94078936e+00,  5.65741655e-01,  7.86595800e-01, -2.07631548e+00,
-       -2.49284574e-01, -7.95504060e+00, -9.64587316e-02, -1.00347352e+00,
-       -6.38610786e-02, -1.85457056e+00, -2.81449107e+00, -2.50150507e-01,
-       -3.46077061e-01,  3.04228802e+00, -9.48568536e-01, -4.05112844e-02,
-        1.01271569e-01, -4.39259967e-01, -1.28919782e+00, -9.99854652e-01,
-       -1.40883875e+00, -2.06278440e+00,  7.15839306e-01,  1.47595033e-01,
-        1.41669923e+00, -2.02037789e+00,  1.36806241e+00,  1.16939837e+00,
-        2.42826434e+01, -4.35818266e-02, -9.42984464e-01, -1.23390559e+00,
-        1.96723112e+00, -7.46551754e-01, -3.94078936e+00, -2.06360836e+00,
-        1.24357735e+00, -1.61638637e+00,  1.17141923e+00,  9.27475270e-01,
-       -2.56882695e+00, -1.26995193e+01, -9.80787254e-01, -2.26959768e+00,
-       -2.77282467e+00,  4.29779533e-01, -2.10074565e+00,  8.91873948e-01,
-       -6.49389738e+00, -1.92099493e+00,  5.69711323e-01,  8.06957946e-01,
-       -1.11190070e+00, -1.75079540e+00,  7.90870497e-01, -2.94434569e+00,
-        9.60678894e-01, -1.39907383e+00, -4.96973956e+00,  1.37998696e+00,
-       -4.02430364e-01,  9.02810010e-01,  6.01424427e+00, -3.15872847e+00,
-        1.10830859e+00, -2.91119977e-01,  4.56602207e-01, -6.05219240e+00,
-       -4.00294206e+00,  3.99845966e+00, -4.58845234e+00,  3.19004231e+00,
-        7.62207440e-01,  6.35990890e-02,  9.64576649e-01,  1.17215836e+00,
-       -2.49284574e-01, -9.42787297e-01, -1.91028763e+00, -3.34105097e-01,
-        1.37998696e+00, -5.29531069e+00, -9.64587316e-02,  2.64449537e+00,
-        8.37785037e-01,  7.10242646e-02,  1.17215836e+00,  1.18929620e+00,
-        3.80225826e-01, -2.37201058e+00,  4.59323918e-01, -2.64059265e-01,
-        3.19004231e+00, -9.53448376e+00, -6.23197062e+00, -2.37461560e+00,
-       -2.23608798e+00, -1.56504859e-01,  1.18929620e+00,  3.71363782e+00,
-        1.61691936e+00, -1.19474094e+00, -6.83311244e-01,  2.42485653e+00,
-       -2.49284574e-01,  4.95093752e+00,  1.88438053e+00,  1.49712176e-01,
-       -2.87834156e-01, -2.80529456e+00,  6.33490212e-01,  2.04296467e-02,
-        1.64269036e+00,  2.36431351e+00, -1.65842488e+00,  3.15976832e+01,
-       -2.94121640e-01, -7.76167654e-01,  1.62699174e+00, -1.60005959e+00,
-        3.58958035e-01,  2.90562386e+00, -2.28129599e+00,  1.17141923e+00,
-        1.56181683e+00, -1.53550374e-01, -1.08598724e+00, -5.64180093e-01,
-        1.89961883e+00, -4.21571720e-01, -6.99658803e-01,  3.02059629e+00,
-       -1.00347352e+00,  3.47996591e+00,  3.63814718e+00,  1.51574394e-01,
-       -7.98863968e-01,  5.48852267e-01,  2.99695705e+00,  9.84084214e-01])
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([-1.47749614e+00, -9.71245553e+00,  5.30955205e-01, -2.67172526e+00,
+        2.08260208e+00,  3.83650224e-01, -3.77128685e+00,  4.01700336e-01,
+       -7.83754981e-01,  3.76092092e-01, -4.28959765e+00,  6.23931391e-01,
+       -2.67172526e+00,  9.17196719e-01,  2.42418362e+00,  2.36216750e+00,
+        5.93314112e-01,  1.16912322e+00, -1.04934349e+00, -1.36701122e+00,
+       -1.60335835e+00, -2.91663872e+00,  9.38410979e-01,  5.82748282e-01,
+        5.69459907e-01,  4.18093105e+00, -6.22055276e-01, -2.91663872e+00,
+       -1.60335835e+00,  2.31739063e+00,  1.88036792e+00,  4.36148219e-01,
+       -3.96022809e-01, -4.28959765e+00,  2.31739063e+00,  2.47415665e+00,
+       -2.59263344e+00,  3.23580014e+00,  4.98827013e+00,  6.20107977e-01,
+       -1.18835712e-01, -3.09721894e-01,  4.58287140e-01,  2.79512891e+00,
+        1.61567020e+00,  2.37039242e+00, -8.91575810e-01, -4.67679217e-01,
+       -1.79249935e+00, -3.80708369e-01, -2.11663176e+00, -8.06457310e-01,
+       -2.08600072e+00,  3.49290095e+00,  3.69340672e+00, -1.15053811e+00,
+        4.39829725e-01, -3.90395457e-01, -2.04859275e+00,  3.46083181e+00,
+       -9.78282801e-01,  1.92066036e+00, -1.18705206e+00,  6.45052022e-01,
+       -1.02546287e+00, -8.06382135e+00,  2.31036270e+00,  2.06694187e-01,
+       -2.57217958e+00,  1.30234141e+00, -5.76857935e+00,  2.59430670e+00,
+        2.80542934e+00, -2.86593371e+00, -6.88570112e-01, -6.75044611e-01,
+        6.67140095e+00, -2.87645340e-01,  2.27879166e+00, -8.17430493e+00,
+       -9.07604734e-01,  9.64725529e-01,  5.53970037e+00,  4.14840386e-01,
+        2.04286503e+00, -8.32044593e-01,  2.61003142e-01, -4.49123071e-01,
+        3.79381275e-02,  1.58394715e+00,  1.44598256e+00, -1.46769654e+00,
+       -4.02762167e+00,  4.38154328e-01, -5.93689973e-01,  4.30435659e-01,
+        6.03797610e-01, -4.25693070e+00, -9.31891951e-01,  5.70374753e+00,
+        2.48081837e-01,  2.70038083e+00, -1.54988158e-01, -2.21618479e+00,
+       -2.13706534e+00,  4.35132875e+00, -3.22828228e+00,  1.23787615e+00,
+        6.62844945e-01,  3.07204142e+00,  3.33122606e-01,  1.32138710e+00,
+       -1.39266051e+00,  8.63170869e-01, -2.25690763e+00,  7.24138823e-02,
+        9.70724028e-01,  3.42735806e+00, -3.69247973e-01,  8.21918932e-01,
+        1.34087698e+00,  3.99349405e-02,  1.23787615e+00, -8.64439303e-01,
+        1.12030041e+01, -2.83855993e-01,  1.07303015e+00, -1.24530946e+00,
+        1.95668430e-01, -2.57217958e+00,  5.98058532e-01,  1.52123539e+00,
+       -3.59080177e+00,  1.78750968e-01, -9.06939121e-01, -2.52734372e-02,
+        2.73821514e+00, -4.35143944e-01,  7.44168271e-01,  9.62569008e-03,
+       -1.75601599e-01, -2.30634266e-01, -2.27633979e-01, -2.67654603e+00,
+        6.77605810e-01,  4.38154328e-01,  2.59430670e+00, -4.61974224e+00,
+       -1.93341011e-01, -6.81541136e-01,  4.42174550e-01,  1.91165166e+00,
+       -3.67742827e-01, -1.17828683e+00, -4.59799689e-02,  7.88335721e-01,
+       -2.02916203e+00, -1.46807548e+00, -6.35183060e-01,  3.58403939e-01,
+       -5.97198015e-01, -1.35478481e+00,  2.94827406e-01,  1.50483559e+00,
+       -3.35862870e+00,  5.81147481e+00, -2.30634266e-01,  1.17559215e+00,
+        8.10635154e-01, -2.67654603e+00, -1.75114313e+00, -6.28785615e-01,
+       -1.89457607e-01,  2.33694790e+00, -8.11438741e-01,  5.90250891e-01,
+       -5.67396408e-01,  2.19119297e+01, -5.14193350e+00, -1.23921589e+00,
+        1.06303318e+00,  4.86701621e-01, -1.40362133e+00, -3.76146596e-01,
+       -5.14193350e+00, -4.82629617e+00, -9.71245553e+00,  9.72867459e-01,
+       -2.27730120e-01, -1.59470955e+00,  2.34413530e-01, -1.53915832e-01,
+        3.58403939e-01, -6.73067826e-01,  8.52823315e-02, -1.11465423e+00,
+        1.58561748e+00,  2.21290691e-01,  4.95254234e+00, -7.30755789e-01,
+       -2.43832950e+00, -7.01741752e+00,  7.52463007e-01, -1.73466084e+00,
+       -1.09004495e+00, -5.74037952e+00,  5.69459907e-01,  4.39829725e-01,
+       -1.68481255e+00, -2.66069970e+00, -2.12154481e-02, -4.49123071e-01,
+        9.62569008e-03, -4.28959765e+00,  4.82562476e+00,  8.83736666e+00,
+       -8.78832252e-01,  6.96336109e+00,  6.21438631e-01,  2.35707246e+00,
+        1.15859429e+00,  4.23420640e+00,  3.89587595e-01, -8.40629085e-01,
+        9.82565339e-01,  2.31036270e+00,  5.65990078e+00,  8.97136951e-03,
+        2.75864866e-01,  4.35132875e+00,  1.83635496e+00, -2.83855993e-01,
+       -1.86227666e+00,  3.35536449e-01,  5.07649014e+00,  4.59399524e-01,
+       -1.06086878e-01, -2.91566434e+00, -2.01470821e-01,  3.35536449e-01,
+        1.95301311e+00, -1.81625866e+00, -1.06921508e+00,  4.96450266e+00,
+        6.45052022e-01, -5.35201006e+00,  6.20107977e-01, -7.82176196e-01,
+        2.13416470e-01,  9.88649838e-01,  1.50227351e-01, -1.83980202e+00,
+        5.57219141e+00, -9.29092134e+00, -1.57039363e+01, -1.13861265e+00,
+       -5.42562769e+00, -8.64439303e-01, -1.47749614e+00,  2.27879166e+00,
+       -6.32887057e-01, -9.06939121e-01,  4.29289504e-01,  1.45247967e+00,
+        1.50227351e-01, -1.57039363e+01, -4.36410760e+00,  4.86701621e-01,
+        4.88207675e-02,  1.12030041e+01, -1.39266051e+00, -2.12214579e+00,
+        5.21981086e-02,  5.89230190e-01, -1.11530331e+01, -1.20754907e+00,
+        3.69340672e+00, -3.20277063e+00, -2.30658580e+00, -3.21104427e+00,
+       -2.15495214e-01,  3.88743262e-01,  4.58287140e-01, -9.31891951e-01,
+       -1.67202708e+00,  8.05584823e-01,  2.13416470e-01,  5.63942744e-01,
+       -1.73466084e+00,  7.60547850e-01, -5.14193350e+00,  1.12578518e+00,
+        1.00535625e+00,  1.00148787e+00,  1.01678745e+00, -6.35183060e-01,
+        2.17538859e+00,  1.74836750e+00, -3.09721894e-01, -1.20754907e+00,
+        1.96695828e+00, -9.37139120e+00,  7.44168271e-01, -2.99955570e-01,
+       -2.57217958e+00, -2.24004732e+00, -1.54587684e+00,  2.90204744e-01,
+        1.43175455e+00,  5.94767103e-02,  8.63170869e-01, -6.96167063e+00,
+        1.96695828e+00, -1.88414142e+00,  2.33694790e+00, -3.54987099e-01,
+        1.12068114e+01,  3.97662904e+00, -8.78406755e-03,  5.37310550e-02,
+        6.31286483e-01,  9.77407430e-02, -1.39266051e+00,  5.21981086e-02,
+       -4.44771991e+00,  2.80542934e+00, -1.42543715e+00,  5.35937178e-01,
+        1.03580381e+01, -7.01741752e+00,  1.12578518e+00,  1.05797968e+00,
+       -2.30977973e+00, -2.76682708e+00,  8.33631846e+00, -1.17828683e+00,
+       -1.40362133e+00,  3.88743262e-01,  8.67599577e-04,  5.37310550e-02,
+        2.61309419e+00, -5.65697329e-01,  1.42975583e-01, -7.94514710e-01,
+       -5.65697329e-01, -4.90171714e+00, -2.15193472e+00,  2.19685870e+00,
+       -2.17943348e+00,  2.89319564e+00,  2.80542934e+00, -7.57135288e-01,
+       -1.98688752e+00, -2.57229397e+00, -1.08689423e+01,  2.00472570e+00,
+        4.49483536e-01,  3.11584155e-01, -2.15193472e+00, -5.14193350e+00,
+        4.89217576e+00,  5.57959714e-01,  4.46548815e-01, -5.45634457e-01,
+        1.34087698e+00, -6.41174101e-01, -3.89405712e-01, -1.40362133e+00,
+        1.84159419e+00, -4.07866678e+00,  7.70003238e-01, -4.22308534e-01,
+       -1.10429865e+00, -5.39828099e-02, -6.97573091e-01, -2.04859275e+00,
+       -1.20223485e+00, -1.29984845e+00, -3.81903283e-01, -2.39757081e-01,
+       -3.82525569e+00, -3.22828228e+00, -2.57217958e+00, -5.65697329e-01,
+       -4.44771991e+00, -8.27692628e-01,  2.59364295e+00,  6.11483294e-01,
+        8.55231175e-01,  2.06694187e-01, -1.55164434e-01, -8.14461461e-01,
+       -2.24767343e+00, -2.12154481e-02,  1.48882654e+00, -6.71502431e-01,
+        4.48330534e-01, -5.82470145e+00, -1.28023320e+00, -7.82176196e-01,
+        3.60346741e+00,  2.92109733e+00, -1.29984845e+00, -2.80301653e+00,
+        6.00783420e+00,  3.59151226e+00,  1.63921646e+00,  7.60547850e-01,
+       -1.23797065e+00, -3.91142038e-01,  2.52249039e+00,  1.28535955e+00,
+        3.26156517e+00, -8.11438741e-01,  5.63942744e-01,  4.49483536e-01,
+        5.63942744e-01, -4.74636795e+00, -1.87323660e+00, -4.88194376e+00,
+       -1.05507697e+00,  1.26159661e+00,  6.17202478e-02,  5.93314112e-01,
+       -2.55174593e+00, -6.55033327e+00,  2.49988526e+00, -2.72601519e+00,
+       -6.26158485e-01,  1.28545287e+00, -1.60335835e+00, -1.11530331e+01,
+        2.75374139e+01,  1.00535625e+00, -1.70412255e+00,  7.41231505e-01,
+        2.04384876e+00,  4.79654099e-02, -5.26660798e+00, -4.44771991e+00,
+        3.76606449e+00, -2.81765971e+00,  4.59399524e-01,  1.40135263e+00,
+        3.46083181e+00, -1.99615339e+00,  3.88550082e-01,  6.37515990e-01,
+        2.01999392e-01,  2.96142347e-01, -3.77128685e+00,  1.54140894e+00,
+       -3.14085733e+00, -1.02546287e+00,  3.49290095e+00,  3.49290095e+00,
+       -7.30755789e-01, -6.22055276e-01, -9.00980380e-01, -3.10962786e+00,
+       -1.09450107e+00, -7.07007656e-01,  2.43672548e+00,  1.82326933e+00,
+        6.67140095e+00, -1.44503573e+00, -2.03215401e+01, -9.37139120e+00,
+       -1.70412981e+00,  3.84566366e-01,  7.67515021e-01, -3.77668251e+00,
+       -1.62988936e+00, -1.91286501e-01,  1.07996530e+00, -7.64792257e-01,
+       -2.09963572e+00, -1.11465423e+00,  2.08253372e+00,  2.66509496e+00,
+        2.92109733e+00, -6.46184823e-01, -5.58316616e-01,  2.15954862e+00,
+       -3.26542593e+00, -2.02916203e+00, -3.77668251e+00, -1.29251417e+00,
+       -1.49928509e+00, -6.86072831e-01, -1.17828683e+00, -1.72521533e+00,
+        6.17202478e-02,  2.49988526e+00, -5.67396408e-01,  2.80542934e+00,
+        2.06694187e-01,  5.99482080e-01,  1.57095243e+00, -6.25359406e+00,
+       -4.07194238e+00,  1.78191346e+00, -2.45794163e+00, -2.76787816e+00,
+        3.45683527e-01,  6.36825688e-01,  4.59399524e-01,  1.91102934e-01,
+       -2.00872330e+00, -9.61886849e+00,  2.43512660e+00,  2.63555778e+00,
+        9.70724028e-01, -9.83305654e-01, -6.84479210e-01,  2.63555778e+00,
+        6.40567294e-01,  2.46619348e-01,  6.35134126e-01, -6.22172296e-01,
+       -1.20844208e+00,  2.04266591e+00, -3.32338702e-02, -1.57993530e+00,
+        1.33692711e+00, -1.05682773e+01,  3.43222804e+00, -7.01741752e+00,
+        6.97601116e-01,  9.37385570e-01, -4.76566429e-01,  1.90418933e+00,
+       -1.88414142e+00, -3.65008979e-01,  2.42244463e+00,  6.21438631e-01,
+       -1.23797065e+00,  6.78372557e-01,  6.20107977e-01,  2.63555778e+00,
+       -7.30755789e-01,  1.54321329e-01, -5.39837367e+00,  3.19056092e+00,
+       -8.33619580e-01, -6.32784739e-01, -2.57217958e+00, -1.09004495e+00,
+        2.59430670e+00, -4.35143944e-01,  9.37385570e-01,  1.87000760e-01,
+        2.31739063e+00, -1.41440595e+00,  4.42174550e-01, -8.38138053e-01,
+        1.78191346e+00,  7.21534574e-01,  1.60032202e+00,  5.71307315e+00,
+        2.49988526e+00,  1.23945958e+01, -1.23733922e+00, -3.34103527e+00,
+        1.35405513e+00,  1.19908774e+00,  6.47401503e-01,  1.84159419e+00,
+        6.78372557e-01,  2.38393190e+00,  1.13946202e+00, -5.97198015e-01,
+       -2.12214579e+00,  2.65473875e+00,  8.97136951e-03,  3.88550082e-01,
+        7.52463007e-01,  2.06694187e-01,  1.12593982e-01,  5.36269348e-01,
+        1.76200094e+00, -1.54988158e-01,  1.98396800e-01, -1.23797065e+00,
+       -1.11530331e+01, -3.02436331e-01,  1.35405513e+00,  2.74052686e-01,
+        1.26786948e+00,  6.11483294e-01,  1.12030041e+01, -2.21060256e+00,
+       -1.98748226e+00, -2.00872330e+00, -2.55174593e+00,  2.38231404e+00,
+       -1.33354277e+00,  4.39048809e-01,  3.58403939e-01, -2.43781288e-01,
+       -5.14193350e+00,  1.48882654e+00,  8.06977792e-01,  4.63261766e-01,
+       -3.26542593e+00,  2.31031197e+00,  5.99482080e-01, -2.54663667e+00,
+        1.05228306e+00, -2.50785066e+00, -1.98748226e+00,  3.80803746e+00,
+        2.51813102e-02,  2.71228734e-01, -6.73067826e-01,  9.71746224e-01,
+        1.79085300e+00, -6.93506360e-01, -2.67172526e+00, -5.42692582e-01,
+        4.74385140e-01, -8.64439303e-01,  4.23420640e+00,  3.10017404e+00,
+        3.53897572e+00,  8.05584823e-01, -5.10438895e-01,  2.99062459e-02,
+        1.05491779e+00,  1.89221184e+00, -2.00872330e+00,  7.01767983e+00,
+        2.67041473e-01,  3.46083181e+00, -5.52510520e+00, -1.15053811e+00,
+       -1.54988158e-01, -3.13341523e+01, -5.22568483e-01,  1.59867884e+00,
+        6.97601116e-01, -3.90395457e-01,  3.59151226e+00,  9.35526677e-02,
+        1.42321765e+00, -6.73067826e-01, -1.02092841e+00,  2.31031197e+00,
+       -3.38616463e+00,  8.55009187e-01,  4.48919282e-01, -1.46807548e+00,
+       -1.92358039e+00, -2.85797396e-01,  1.49817818e+00, -1.49768478e+00,
+        5.22149514e-01, -4.50230396e+00,  9.37385570e-01, -3.00304059e-01,
+        1.91972816e+00, -2.24767343e+00,  1.78575799e+00,  1.61567020e+00,
+        1.17601747e-01, -8.64439303e-01, -3.06568549e+01,  3.80803746e+00,
+        1.32666893e-01, -5.32642189e-02,  8.55009187e-01,  3.00464967e+00,
+       -1.52607034e-01,  3.72401637e+00,  6.96336109e+00,  8.97136951e-03,
+       -2.26561284e-01, -6.67191194e-01,  4.16876253e-01, -5.15608279e-01,
+        2.49790330e-01, -4.07194238e+00, -1.54988158e-01,  2.33694790e+00,
+       -1.62123359e+00, -2.43832950e+00, -9.34008803e+00, -8.35053537e-01,
+        9.17196719e-01,  6.80854400e-01, -2.99010590e-01,  1.68461625e+00,
+        2.59431496e+00,  3.74263622e+00,  9.70311458e-01,  6.67140095e+00,
+       -7.00741296e-02,  5.13812171e+00,  5.63942744e-01, -5.45634457e-01,
+        3.60423079e+00,  2.44543751e+01, -4.02762167e+00,  2.21290691e-01,
+        4.29289504e-01, -2.25716106e+00,  3.03319850e+00,  4.32627549e-01,
+        6.19675516e+00, -2.61584345e-01,  3.09010769e+00,  7.88335721e-01,
+        1.74836750e+00, -5.74037952e+00,  7.01724838e-01, -1.25702163e+00,
+        1.87000760e-01,  1.20826379e+00,  5.37310550e-02,  2.31739063e+00,
+       -1.51018581e-01,  2.59430670e+00, -1.02529169e+00,  2.89319564e+00,
+       -1.04658923e+01, -2.50785066e+00,  1.56736713e+00, -1.57039363e+01,
+       -5.39837367e+00,  2.51813102e-02,  1.26169361e+00, -2.45794163e+00,
+        1.91165166e+00,  1.59867884e+00,  7.37364510e+00, -3.35304103e-01,
+       -1.38828787e+01,  2.80542934e+00,  3.80461416e-01, -3.34129210e+00,
+       -1.54784709e+00,  2.60167664e-01,  3.51913946e+00,  5.99482080e-01,
+        2.46441181e+00, -1.46769654e+00,  5.69459907e-01, -3.34103527e+00,
+       -4.59431287e-01,  3.49290095e+00,  7.33936914e-01, -6.86072831e-01,
+       -1.44503573e+00, -4.20337333e-01, -1.24509184e+00,  6.81799366e-01,
+        2.36971256e+00,  1.21159660e-01,  5.21981086e-02, -5.26660798e+00,
+        6.84355457e-01, -9.83305654e-01, -2.12655347e+00,  1.31464338e-01,
+       -3.67124258e-01, -1.52386986e+00,  1.33692711e+00, -4.02762167e+00,
+        3.89527866e-01, -7.54864175e-01,  6.36825688e-01,  1.98531622e+00,
+        9.54404991e+00, -4.38970764e+00, -1.59470955e+00, -1.82456499e+00,
+        9.44953016e+00,  2.80542934e+00, -5.30027009e-01, -4.35208434e+00,
+       -1.19226205e+00, -3.17773466e+00,  1.58631159e+00, -1.10152150e+00,
+       -1.66429205e+00,  8.05282016e-01,  1.12030041e+01, -1.15982879e+00,
+       -1.28823278e+00,  7.62044175e-01, -2.66069970e+00,  9.14669459e-01,
+        2.80542934e+00,  8.10635154e-01,  3.58403939e-01,  3.59151226e+00,
+       -2.00452903e-01, -1.78891106e+00, -2.80124805e+00,  3.89587595e-01,
+        5.99482080e-01, -6.97544306e-01,  7.37364510e+00, -6.25359406e+00,
+       -9.82479720e-01,  3.17308609e+00, -4.82629617e+00, -2.25716106e+00,
+       -1.28056671e+00, -3.40085646e-01,  1.41495984e+00, -1.61145299e+00,
+        2.31036270e+00,  1.25189984e+00,  2.28173877e-01, -6.67191194e-01,
+        1.74539712e+00, -3.10962786e+00,  9.32156308e-01, -1.68774694e+00,
+       -1.22569747e-02, -2.08600072e+00, -1.80414815e+00, -9.38311492e-01,
+        2.36627584e-01, -2.40656087e+00,  9.32156308e-01,  2.30346181e+00,
+       -6.17230910e-01,  1.48882654e+00,  8.72022594e-01, -8.59029186e-01,
+        2.65473875e+00,  6.49339302e-02, -2.33042251e+00, -7.30755789e-01,
+       -7.93945784e-01,  5.53970037e+00, -5.28866750e-01,  2.65473875e+00,
+        1.72085764e+00,  1.12958874e+00,  1.60032202e+00, -1.17383580e+00,
+       -5.40345110e-01,  7.70303230e-01, -8.12343167e-01, -6.97544306e-01,
+       -6.55033327e+00, -1.41297414e+00,  9.40684280e-01, -5.10438895e-01,
+       -1.73466084e+00,  2.31031197e+00,  1.44598256e+00,  2.34413530e-01,
+       -6.22172296e-01,  1.74836750e+00, -1.81387294e-01, -2.02916203e+00,
+       -1.59470955e+00,  8.16708821e-01, -3.38616463e+00,  1.10268749e+00,
+       -8.41037212e-01,  5.07649014e+00, -4.81631024e+00,  2.70038083e+00,
+        2.44543751e+01,  3.31829617e+00,  7.67065404e-01, -7.32133446e-01,
+        3.46083181e+00,  4.15878305e-01,  5.58394241e-01, -4.02762167e+00,
+       -2.64122424e+00,  4.50340079e+00,  1.31933894e+00, -1.75601599e-01,
+        2.65473875e+00,  2.67041473e-01,  2.71228734e-01,  2.59364295e+00,
+        5.76384387e-01,  1.74662123e-01, -2.50234542e-01, -2.87645340e-01,
+        1.63287110e-01, -1.46668815e+00,  2.80542934e+00, -2.24004732e+00,
+        4.86701621e-01,  6.37831403e-01,  1.42975583e-01, -1.63126892e+00,
+       -8.11438741e-01,  3.46083181e+00, -3.18162520e+00,  5.10061559e+00,
+       -1.91437478e+00, -4.36410760e+00, -5.35201006e+00, -3.20277063e+00,
+       -8.81529932e-01, -3.36296205e-02, -6.84479210e-01, -4.83828853e-01,
+        5.89230190e-01, -3.33758223e+00,  4.69246204e+00,  5.69459907e-01,
+       -1.72478209e+00, -6.46184823e-01,  3.69340672e+00, -3.80708369e-01,
+       -1.70412255e+00,  1.84759404e+00, -1.20754907e+00,  1.39892957e-01,
+        3.11584155e-01, -7.74306261e-01, -3.77128685e+00,  1.99315338e+00,
+       -2.01396597e+00,  3.35536449e-01,  2.46619348e-01,  3.03319850e+00,
+       -1.20754907e+00,  1.74836750e+00,  9.50718444e-01, -1.88414142e+00,
+       -1.00096700e+00, -1.98688752e+00,  5.13178842e-01,  1.82479205e+00,
+       -3.46985825e+00,  7.24138823e-02,  1.72676644e-01,  3.07134733e+00,
+       -8.72575110e-02, -1.58575060e+00, -2.87645340e-01, -1.67613933e+00,
+       -6.26158485e-01, -1.85692223e+00, -2.52734372e-02, -4.44771991e+00,
+       -8.33619580e-01,  9.40003470e+00, -5.82470145e+00, -9.71245553e+00,
+        2.30346181e+00, -4.61974224e+00,  4.05642228e-01,  6.21438631e-01,
+        5.69662184e-01,  2.46441181e+00, -1.46769654e+00,  1.57095243e+00,
+        2.31036270e+00, -7.80772454e-01, -3.93173967e-01,  5.69459907e-01,
+       -5.14193350e+00,  2.52249039e+00,  1.91165166e+00, -2.86193472e+00,
+        1.34713263e+00, -1.71270718e+00,  1.89221184e+00, -1.78155163e+00,
+        1.40135263e+00, -2.64428833e+00,  5.99482080e-01,  3.27920630e+00,
+       -2.34487534e+00, -3.08847470e+00,  4.41933550e-01,  1.79085300e+00,
+       -3.90395457e-01, -5.76857935e+00, -5.67396408e-01, -3.67742827e-01,
+       -7.43342272e-01, -1.57169920e+00,  1.20532892e+00,  5.95415429e-01,
+        3.57364046e+00, -1.39266051e+00, -5.10438895e-01, -1.60335835e+00,
+        3.19067785e+00, -3.67742827e-01, -6.88570112e-01,  4.02981209e-01,
+        1.50483559e+00,  1.23945958e+01,  1.56528006e+01, -4.53576196e+00])
 </pre></div>
 </div>
 </div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -614,9 +746,11 @@ const thebe_selector_output = ".output, .cell_output"
 
               </div>
               
-            
-                <!-- Previous / next buttons -->
-<div class='prev-next-area'> 
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
     <a class='left-prev' id="prev-link" href="nearest_synth_test_train.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
@@ -625,24 +759,28 @@ const thebe_selector_output = ".output, .cell_output"
         </div>
     </a>
 </div>
-            
+            </footer>
         </div>
     </div>
-    <footer class="footer">
-  <p>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By PolicyEngine<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
     
-      By PolicyEngine<br/>
-    
-        &copy; Copyright 2022.<br/>
-  </p>
-</footer>
-</main>
+</div>
 
 
       </div>
     </div>
   
-  <script src="_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
 
   </body>
 </html>
